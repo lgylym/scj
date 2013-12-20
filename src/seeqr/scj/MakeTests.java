@@ -1,5 +1,6 @@
 package seeqr.scj;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 
 /**
@@ -8,6 +9,16 @@ import java.util.ArrayList;
  */
 public class MakeTests {
     public static void main(String[] args) {
+
+        BigInteger a = BigInteger.valueOf(0xFA);
+        BigInteger s = BigInteger.valueOf(1);
+        BigInteger zero = BigInteger.valueOf(0);
+        while(!s.equals(zero)) {
+            s = a.and(s.subtract(a));
+            System.out.println(Integer.toBinaryString(s.intValue()));
+        }
+
+/*
         long startTime;
         long estimatedTime;
         int relationSize = 10000;
@@ -32,14 +43,17 @@ public class MakeTests {
             estimatedTime = System.nanoTime() - startTime;
             System.out.print(estimatedTime/(1000000.0));
             System.out.print("ms\n");
-            /*
+            */
+/*
             for(SigSimpleTuple s:R1) {
                 System.out.print(s.toString());
-            }*/
+            }*//*
+
 
         }catch(Exception e) {
             System.out.print(e);
         }
+*/
 
     }
 }

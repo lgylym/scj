@@ -58,6 +58,16 @@ public class SimpleJoinAlgorithms {
     }
 
     /**
+     * nested loop join with bigint signature
+     * @param R
+     * @param S
+     * @param sig_len
+     */
+    public void NLBigintSignatureJoin(ArrayList<SigSimpleTuple> R, ArrayList<SigSimpleTuple> S, int sig_len) {
+
+    }
+
+    /**
      * SHJ, but this is not the really SHJ, simplified with only a shorter signature.
      * @param R
      * @param S

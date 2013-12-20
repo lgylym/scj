@@ -2,6 +2,8 @@ package seeqr.scj;
 
 import org.omg.CORBA._PolicyStub;
 
+import java.math.BigInteger;
+
 /**
  * Created by yluo on 12/19/13.
  */
@@ -88,6 +90,9 @@ public class Utils {
         return 1;
     }
 
+    public static boolean compare_sig_contain(BigInteger sig1, BigInteger sig2) {
+        return sig1.not().and(sig2).equals(BigInteger.ZERO);
+    }
 
     /**
      * the normal implementation, using modulo sig_len
@@ -110,6 +115,20 @@ public class Utils {
         return signature;
     }
 
+    /**
+     * one element -> one bit in the signature
+     * sig_len is the number of bits in the signature
+     * @param set
+     * @param sig_len
+     * @return
+     */
+    public static BigInteger create_sig_bigint(int[] set, int sig_len) {
+        BigInteger signature = BigInteger.valueOf(0);
+        for(int i = 0; i < set.length; i++) {
+            signature = signature.setBit(set[i]%sig_len);
+        }
+        return signature;
+    }
 
     public static void main(String[] args) {
         int[] set1 = {0,1,2,3,4,5,6,7};
@@ -129,5 +148,8 @@ public class Utils {
 
         assert create_sig_normal(set4, 1)[0] == 1;
         assert create_sig_normal(set1, 1)[0] == 0xFF;
+
+        System.out.println(Integer.toBinaryString(create_sig_bigint(set2, 8).intValue()));
+        System.out.println(compare_sig_contain(BigInteger.valueOf(0xBB),BigInteger.valueOf(0xBA)));
     }
 }

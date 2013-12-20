@@ -2,9 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3209d52b-852b-4dab-9a65-b1f93d8e2011" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/seeqr/scj/SigSimpleTuple.java" />
+      <change type="DELETED" beforePath="D:\SVNs\scj\src\seeqr\scj\SigTuple.java" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/seeqr/scj/Generator.java" afterPath="$PROJECT_DIR$/src/seeqr/scj/Generator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/seeqr/scj/MakeTests.java" afterPath="$PROJECT_DIR$/src/seeqr/scj/MakeTests.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/seeqr/scj/SimpleJoinAlgorithms.java" afterPath="$PROJECT_DIR$/src/seeqr/scj/SimpleJoinAlgorithms.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/seeqr/scj/Tuple.java" afterPath="$PROJECT_DIR$/src/seeqr/scj/Tuple.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/seeqr/scj/Utils.java" afterPath="$PROJECT_DIR$/src/seeqr/scj/Utils.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/seeqr/scj/Tuple.java" afterPath="$PROJECT_DIR$/src/seeqr/scj/SimpleTuple.java" />
     </list>
     <ignored path="scj.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -71,7 +77,7 @@
       <file leaf-file-name="Utils.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/seeqr/scj/Utils.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="86" column="0" selection-start="2248" selection-end="2248" vertical-scroll-proportion="0.0" vertical-offset="1462" max-vertical-offset="1921">
+            <state line="81" column="42" selection-start="2045" selection-end="2064" vertical-scroll-proportion="0.0" vertical-offset="1173" max-vertical-offset="2346">
               <folding />
             </state>
           </provider>
@@ -80,16 +86,27 @@
       <file leaf-file-name="Generator.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/seeqr/scj/Generator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="71" column="10" selection-start="2309" selection-end="2309" vertical-scroll-proportion="0.0" vertical-offset="761" max-vertical-offset="1377">
+            <state line="37" column="61" selection-start="1275" selection-end="1292" vertical-scroll-proportion="0.0" vertical-offset="285" max-vertical-offset="1666">
+              <folding>
+                <element signature="e#1384#1400#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Tuple.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/seeqr/scj/Tuple.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="6" column="0" selection-start="85" selection-end="85" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="238">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SimpleJoinAlgorithms.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="SimpleJoinAlgorithms.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/seeqr/scj/SimpleJoinAlgorithms.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="45" selection-start="241" selection-end="257" vertical-scroll-proportion="0.0" vertical-offset="221" max-vertical-offset="544">
+            <state line="31" column="31" selection-start="749" selection-end="764" vertical-scroll-proportion="0.6310518" vertical-offset="149" max-vertical-offset="1054">
               <folding />
             </state>
           </provider>
@@ -98,37 +115,25 @@
       <file leaf-file-name="MakeTests.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/seeqr/scj/MakeTests.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="63" selection-start="435" selection-end="435" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="510">
+            <state line="24" column="0" selection-start="915" selection-end="915" vertical-scroll-proportion="0.0" vertical-offset="102" max-vertical-offset="867">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="README.md" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/README.md">
-          <provider selected="true" editor-type-id="MarkdownPreviewEditor">
-            <state />
-          </provider>
-          <provider editor-type-id="text-editor">
-            <state line="6" column="1" selection-start="138" selection-end="138" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="238">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Tuple.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/seeqr/scj/Tuple.java">
+      <file leaf-file-name="SimpleTuple.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/seeqr/scj/SimpleTuple.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="31" column="29" selection-start="722" selection-end="722" vertical-scroll-proportion="0.0" vertical-offset="527" max-vertical-offset="680">
+            <state line="32" column="5" selection-start="328" selection-end="746" vertical-scroll-proportion="0.0" vertical-offset="81" max-vertical-offset="680">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SigTuple.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/seeqr/scj/SigTuple.java">
+      <file leaf-file-name="SigSimpleTuple.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/seeqr/scj/SigSimpleTuple.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="5" column="3" selection-start="89" selection-end="89" vertical-scroll-proportion="0.0" vertical-offset="85" max-vertical-offset="272">
+            <state line="18" column="24" selection-start="516" selection-end="516" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="612">
               <folding />
             </state>
           </provider>
@@ -147,14 +152,16 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/seeqr/scj/Utils.java" />
         <option value="$PROJECT_DIR$/src/seeqr/scj/NestedLoopNormal.java" />
+        <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/src/seeqr/scj/SigTuple.java" />
+        <option value="$PROJECT_DIR$/src/seeqr/scj/Utils.java" />
+        <option value="$PROJECT_DIR$/src/seeqr/scj/SimpleTuple.java" />
         <option value="$PROJECT_DIR$/src/seeqr/scj/Tuple.java" />
         <option value="$PROJECT_DIR$/src/seeqr/scj/Generator.java" />
+        <option value="$PROJECT_DIR$/src/seeqr/scj/SigSimpleTuple.java" />
         <option value="$PROJECT_DIR$/src/seeqr/scj/SimpleJoinAlgorithms.java" />
         <option value="$PROJECT_DIR$/src/seeqr/scj/MakeTests.java" />
-        <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
   </component>
@@ -179,7 +186,7 @@
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1" splitterProportion="0.5">
-      <flattenPackages ProjectPane="true" />
+      <flattenPackages ProjectPane="false" />
       <showMembers />
       <showModules />
       <showLibraryContents />
@@ -203,6 +210,28 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="scj" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scj" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scj" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scj" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="seeqr" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="scj" />
@@ -409,6 +438,11 @@
       <created>1387460401175</created>
       <updated>1387460401175</updated>
     </task>
+    <task id="LOCAL-00001" summary="change readme">
+      <created>1387541419157</created>
+      <updated>1387541419157</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -420,22 +454,22 @@
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32941177" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32941177" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32941177" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32941177" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32941177" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
     </layout>
@@ -452,6 +486,8 @@
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
+    <MESSAGE value="change readme" />
+    <option name="LAST_COMMIT_MESSAGE" value="change readme" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -471,7 +507,9 @@
     <entry file="file://$PROJECT_DIR$/src/seeqr/scj/Generator.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="71" column="10" selection-start="2309" selection-end="2309" vertical-scroll-proportion="0.0" vertical-offset="761" max-vertical-offset="1377">
-          <folding />
+          <folding>
+            <element signature="e#1384#1400#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -496,14 +534,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/Tuple.java">
+    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/SimpleTuple.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="31" column="29" selection-start="722" selection-end="722" vertical-scroll-proportion="0.0" vertical-offset="527" max-vertical-offset="680">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/SigTuple.java">
+    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/SigSimpleTuple.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="5" column="3" selection-start="89" selection-end="89" vertical-scroll-proportion="0.0" vertical-offset="85" max-vertical-offset="272">
           <folding />
@@ -520,7 +558,9 @@
     <entry file="file://$PROJECT_DIR$/src/seeqr/scj/Generator.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="71" column="10" selection-start="2309" selection-end="2309" vertical-scroll-proportion="0.0" vertical-offset="761" max-vertical-offset="1377">
-          <folding />
+          <folding>
+            <element signature="e#1384#1400#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -538,14 +578,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/Tuple.java">
+    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/SimpleTuple.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="31" column="29" selection-start="722" selection-end="722" vertical-scroll-proportion="0.0" vertical-offset="527" max-vertical-offset="680">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/SigTuple.java">
+    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/SigSimpleTuple.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="5" column="3" selection-start="89" selection-end="89" vertical-scroll-proportion="0.0" vertical-offset="85" max-vertical-offset="272">
           <folding />
@@ -573,58 +613,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/Tuple.java">
+    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/SimpleTuple.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="9" column="0" selection-start="139" selection-end="139" vertical-scroll-proportion="0.0" vertical-offset="153" max-vertical-offset="510">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/SigTuple.java">
+    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/SigSimpleTuple.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="7" column="0" selection-start="119" selection-end="119" vertical-scroll-proportion="0.0" vertical-offset="119" max-vertical-offset="255">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/SigTuple.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="3" selection-start="89" selection-end="89" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="272">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/Utils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="86" column="0" selection-start="2248" selection-end="2248" vertical-scroll-proportion="0.0" vertical-offset="409" max-vertical-offset="1122">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/Tuple.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="29" selection-start="722" selection-end="722" vertical-scroll-proportion="0.0" vertical-offset="64" max-vertical-offset="680">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/Generator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="71" column="10" selection-start="2309" selection-end="2309" vertical-scroll-proportion="0.0" vertical-offset="761" max-vertical-offset="1377">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/SimpleJoinAlgorithms.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="45" selection-start="241" selection-end="257" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="544">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/MakeTests.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="63" selection-start="435" selection-end="435" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="510">
           <folding />
         </state>
       </provider>
@@ -635,6 +633,57 @@
       </provider>
       <provider editor-type-id="text-editor">
         <state line="6" column="1" selection-start="138" selection-end="138" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="238">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/Utils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="81" column="42" selection-start="2045" selection-end="2064" vertical-scroll-proportion="0.0" vertical-offset="714" max-vertical-offset="2346">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/Tuple.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="0" selection-start="85" selection-end="85" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="238">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/SimpleTuple.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="32" column="5" selection-start="328" selection-end="746" vertical-scroll-proportion="0.0" vertical-offset="81" max-vertical-offset="680">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/Generator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="37" column="61" selection-start="1275" selection-end="1292" vertical-scroll-proportion="0.0" vertical-offset="285" max-vertical-offset="1666">
+          <folding>
+            <element signature="e#1384#1400#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/SigSimpleTuple.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="18" column="24" selection-start="516" selection-end="516" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="612">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/MakeTests.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="0" selection-start="915" selection-end="915" vertical-scroll-proportion="0.0" vertical-offset="102" max-vertical-offset="867">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/seeqr/scj/SimpleJoinAlgorithms.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="31" column="31" selection-start="749" selection-end="764" vertical-scroll-proportion="0.6310518" vertical-offset="149" max-vertical-offset="1054">
           <folding />
         </state>
       </provider>

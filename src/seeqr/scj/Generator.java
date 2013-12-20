@@ -9,24 +9,41 @@ import java.util.*;
 public class Generator {
     /**
      * Generate a random relation with everything random
+     * A bit generic programming to handle different tuple classes
      * @param relationSize
      * @param setMaxSize the maximum cardinality one set is allowed to have
      * @param setMaxRange the range the set value is allowed (exclusive)
      * @return
      */
-    public static ArrayList<Tuple> generateRandomRelation(int relationSize, int setMaxSize, int setMaxRange){
-        ArrayList<Tuple> result = new ArrayList<Tuple>(relationSize);
+    public static<T extends SimpleTuple> ArrayList<T> generateRandomRelation(
+            int relationSize, int setMaxSize, int setMaxRange, Class<T> cls) throws Exception {
+        ArrayList<T> result = new ArrayList<T>(relationSize);
         Random rng = new Random(); // Ideally just create one instance globally
-        Tuple tuple;
+        T tuple;
         int setSize;
         for (int i = 0; i < relationSize; i++) {
             setSize = rng.nextInt(setMaxSize)+1;
-            tuple = new Tuple(i,setSize);
+            tuple = cls.newInstance();
+            tuple.tupleID = i;
+            tuple.setSize = setSize;
             tuple.setValues = generateIntArray(rng,setSize,setMaxRange);
             result.add(tuple);
         }
         //shuffle the list
         Collections.shuffle(result,rng);
+        return result;
+    }
+
+
+    public static ArrayList<SigSimpleTuple> toSigSimpleTuples(ArrayList<SimpleTuple> relation) {
+        ArrayList<SigSimpleTuple> result = new ArrayList<SigSimpleTuple>();
+        for(SimpleTuple r : relation) {
+            SigSimpleTuple s = new SigSimpleTuple();
+            s.tupleID = r.tupleID;
+            s.setSize = r.setSize;
+            s.setValues = r.setValues;
+            result.add(s);
+        }
         return result;
     }
 
@@ -64,9 +81,9 @@ public class Generator {
             System.out.print(" ");
         }
 
-        ArrayList<Tuple> result = generateRandomRelation(10,10,100);
+        ArrayList<SimpleTuple> result = generateRandomRelation(10,10,100);
         //System.out.print(result.size());
-        for(Tuple re:result) {
+        for(SimpleTuple re:result) {
             System.out.print(re.toString());
         }
         */

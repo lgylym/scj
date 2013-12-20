@@ -49,6 +49,7 @@ public class Utils {
 
     /**
      * compare two signatures, sig1 and sig2 should have the same size
+     * return 1 if sig1 contains sig2
      * return 0 if equal
      * return -1 if not equal
      * @param sig1
@@ -56,13 +57,37 @@ public class Utils {
      * @return
      */
     public static int compare_sig(int[] sig1, int[] sig2) {
+        int compare;
+        boolean contain = false;
         for(int i = 0; i < sig1.length; i++) {
             if(sig1[i] != sig2[i]) {
+                if(((~sig1[i])&(sig2[i]))!=0) {
+                    return -1;
+                }else {
+                    contain = true;
+                }
+            }
+        }
+        return contain?1:0;
+    }
+
+    /**
+     * only care about containment, do not care about equality
+     * return 1 if sig1 \supseteq sig2
+     * return -1 if not
+     * @param sig1
+     * @param sig2
+     * @return
+     */
+    public  static int compare_sig_contain(int[] sig1, int[] sig2) {
+        for(int i = 0; i < sig1.length; i++) {
+            if(((~sig1[i])&(sig2[i]))!=0) {
                 return -1;
             }
         }
-        return 0;
+        return 1;
     }
+
 
     /**
      * the normal implementation, using modulo sig_len

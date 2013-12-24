@@ -27,8 +27,6 @@ public class BitOperations {
         return result;
     }
 
-
-
     /**
      *
      * @param bstream1
@@ -60,6 +58,4 @@ public class BitOperations {
         }
         return false;
     }
-
-
 }

@@ -1,12 +1,12 @@
 package seeqr.scj;
 
-import java.math.BigInteger;
+import java.util.BitSet;
 
 /**
  * Created by yluo on 12/20/13.
  */
-public class BigintSimpleTuple extends SimpleTuple {
-    BigInteger signature;
+public class BitsetSimpleTuple extends SimpleTuple {
+    BitSet signature;
 
     public String toString() {
         StringBuffer sb = new StringBuffer();
@@ -15,7 +15,7 @@ public class BigintSimpleTuple extends SimpleTuple {
         sb.append(",set size:");
         sb.append(setSize);
         sb.append(",signature:");
-        sb.append(Integer.toBinaryString(signature.intValue()));
+        sb.append(signature.toString());
 
         sb.append("\nset value:");
 

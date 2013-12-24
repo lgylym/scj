@@ -36,12 +36,24 @@ public class Generator {
 
 
     public static ArrayList<SigSimpleTuple> toSigSimpleTuples(ArrayList<SimpleTuple> relation) {
-        ArrayList<SigSimpleTuple> result = new ArrayList<SigSimpleTuple>();
+        ArrayList<SigSimpleTuple> result = new ArrayList<SigSimpleTuple>(relation.size());
         for(SimpleTuple r : relation) {
             SigSimpleTuple s = new SigSimpleTuple();
             s.tupleID = r.tupleID;
             s.setSize = r.setSize;
             s.setValues = r.setValues;
+            result.add(s);
+        }
+        return result;
+    }
+
+    public static ArrayList<BitsetSimpleTuple> toBigintSimpleTuples(ArrayList<SimpleTuple> relation) {
+        ArrayList<BitsetSimpleTuple> result = new ArrayList<BitsetSimpleTuple>(relation.size());
+        for(SimpleTuple r : relation) {
+            BitsetSimpleTuple s = new BitsetSimpleTuple();
+            s.tupleID = r.tupleID;
+            s.setSize = r.setSize;
+            s.setValues=  r.setValues;
             result.add(s);
         }
         return result;

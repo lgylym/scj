@@ -1,8 +1,7 @@
 package seeqr.scj;
 
-import org.omg.CORBA._PolicyStub;
-
 import java.math.BigInteger;
+import java.util.BitSet;
 
 /**
  * Created by yluo on 12/19/13.
@@ -25,7 +24,7 @@ public class Utils {
         int len1 = set1.length;
         int len2 = set2.length;
 
-        if(len1 > len2) {
+        if(len1 > len2) {//containment
             while((i < len1)&&(j < len2)) {
                 if(set1[i] == set2[j]) {
                     i++;j++;
@@ -36,7 +35,7 @@ public class Utils {
                 }
             }
             return (j == len2)?1:-1;
-        }else if(len1 == len2) {
+        }else if(len1 == len2) {//equality
             while(i < len1) {
                 if(set1[i] != set2[i]) {
                     return -1;
@@ -58,7 +57,7 @@ public class Utils {
      * @param sig2
      * @return
      */
-    public static int compare_sig(int[] sig1, int[] sig2) {
+    public static int compare_sig(long[] sig1, long[] sig2) {
         int compare;
         boolean contain = false;
         for(int i = 0; i < sig1.length; i++) {
@@ -81,7 +80,7 @@ public class Utils {
      * @param sig2
      * @return
      */
-    public  static int compare_sig_contain(int[] sig1, int[] sig2) {
+    public  static int compare_sig_contain(long[] sig1, long[] sig2) {
         for(int i = 0; i < sig1.length; i++) {
             if(((~sig1[i])&(sig2[i]))!=0) {
                 return -1;
@@ -90,8 +89,16 @@ public class Utils {
         return 1;
     }
 
-    public static boolean compare_sig_contain(BigInteger sig1, BigInteger sig2) {
-        return sig1.not().and(sig2).equals(BigInteger.ZERO);
+    /**
+     *
+     * @param sig1
+     * @param sig2
+     * @return true if sig1 contains sig2
+     */
+    public static boolean compare_sig_contain(BitSet sig1, BitSet sig2) {
+        BitSet sig3 = (BitSet)sig2.clone();
+        sig3.andNot(sig1);
+        return sig3.isEmpty();
     }
 
     /**
@@ -101,15 +108,15 @@ public class Utils {
      * @param sig_len how many integers we use to represent a signature
      * @return
      */
-    public static int[] create_sig_normal(int[] set, int sig_len) {
-        int[] signature = new int[sig_len];
+    public static long[] create_sig_normal(int[] set, int sig_len) {
+        long[] signature = new long[sig_len];
         int remainder = 0;
         int index = 0;
         int bit = 0;
         for(int i = 0; i < set.length; i++) {
-            remainder = set[i]%(32*sig_len);
-            index = remainder / 32;
-            bit = remainder % 32;
+            remainder = set[i]%(Long.SIZE*sig_len);
+            index = remainder / Long.SIZE;
+            bit = remainder % Long.SIZE;
             signature[index] |= 1 << (bit);
         }
         return signature;
@@ -122,10 +129,10 @@ public class Utils {
      * @param sig_len
      * @return
      */
-    public static BigInteger create_sig_bigint(int[] set, int sig_len) {
-        BigInteger signature = BigInteger.valueOf(0);
+    public static BitSet create_sig_bitset(int[] set, int sig_len) {
+        BitSet signature = new BitSet(sig_len);
         for(int i = 0; i < set.length; i++) {
-            signature = signature.setBit(set[i]%sig_len);
+            signature.set(set[i] % sig_len);
         }
         return signature;
     }
@@ -135,9 +142,9 @@ public class Utils {
         int[] set2 = {1,2,3};
         int[] set3 = {1,2,5,6,7,8};
         int[] set4 = {64};
-        int[] sig1 = {1,10};
-        int[] sig2 = {1,10};
-        int[] sig3 = {2,10};
+        long[] sig1 = {1,10};
+        long[] sig2 = {1,10};
+        long[] sig3 = {2,10};
         //System.out.print(compare_set(set1, set2));
         assert compare_set(set1, set2) == 1;
         assert compare_set(set2, set1) == -1;
@@ -149,7 +156,7 @@ public class Utils {
         assert create_sig_normal(set4, 1)[0] == 1;
         assert create_sig_normal(set1, 1)[0] == 0xFF;
 
-        System.out.println(Integer.toBinaryString(create_sig_bigint(set2, 8).intValue()));
-        System.out.println(compare_sig_contain(BigInteger.valueOf(0xBB),BigInteger.valueOf(0xBA)));
+        System.out.println(create_sig_bitset(set3,8).toString());
+        System.out.println(compare_sig_contain(create_sig_bitset(set2,8),create_sig_bitset(set3,8)));
     }
 }

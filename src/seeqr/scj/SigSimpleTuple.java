@@ -5,7 +5,7 @@ package seeqr.scj;
  * Created by yluo on 12/19/13.
  */
 public class SigSimpleTuple extends SimpleTuple {
-    protected int[] signature;
+    protected long[] signature;
 
     public String toString() {
         StringBuffer sb = new StringBuffer();
@@ -14,8 +14,8 @@ public class SigSimpleTuple extends SimpleTuple {
         sb.append(",set size:");
         sb.append(setSize);
         sb.append(",signature:");
-        for(int sig:signature) {
-            sb.append(Integer.toBinaryString(sig));
+        for(long sig:signature) {
+            sb.append(Long.toBinaryString(sig));
             sb.append(" ");
         }
         sb.append("\nset value:");

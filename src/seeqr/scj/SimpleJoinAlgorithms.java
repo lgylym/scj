@@ -25,7 +25,7 @@ public class SimpleJoinAlgorithms {
                 }
             }
         }
-        System.out.println("will return "+Integer.toString(count)+" results");
+        System.out.println("NL normal will return "+Integer.toString(count)+" results");
     }
 
     /**
@@ -54,11 +54,11 @@ public class SimpleJoinAlgorithms {
                 }
             }
         }
-        System.out.println("will return "+Integer.toString(count)+" results");
+        System.out.println("NL signature will return "+Integer.toString(count)+" results");
     }
 
     /**
-     * nested loop join with bigint signature
+     * nested loop join with BitSet signature
      * @param R
      * @param S
      * @param sig_len
@@ -84,7 +84,7 @@ public class SimpleJoinAlgorithms {
                 }
             }
         }
-        System.out.println("will return "+Integer.toString(count)+" results");
+        System.out.println("bitset signature will return "+Integer.toString(count)+" results");
 
     }
 
@@ -94,26 +94,173 @@ public class SimpleJoinAlgorithms {
      * @param S
      * @param sig_len
      */
-//    public void SHJ(ArrayList<SigSimpleTuple> R, ArrayList<SigSimpleTuple> S, int sig_len) {
-//        //create signatures
-//        //initially not too big, but big enough
-//        HashMap<List<Integer>,SigSimpleTuple> hashMap = new HashMap<List<Integer>, SigSimpleTuple>(R.size()/2);
-//        for(SigSimpleTuple r:R) {
-//            r.signature = Utils.create_sig_normal(r.setValues, sig_len);
-//            hashMap.put(Longs.asList(r.signature), r);
+    public void SHJ(ArrayList<SigSimpleTuple> R, ArrayList<SigSimpleTuple> S, int sig_len) {
+        //create signatures
+        //initially not too big, but big enough
+        HashMap<Integer,List<SigSimpleTuple>> hashMap = new HashMap<Integer, List<SigSimpleTuple>>(S.size()/2);
+
+        //put all tuples in S to hashmap
+        for(SigSimpleTuple s:S) {
+            s.signature = Utils.create_sig_normal(s.setValues, sig_len);
+            int key = BitOperations.FIRSTBITS & (s.signature[0]);
+
+            List<SigSimpleTuple> l = hashMap.get(key);
+            if(l == null) {
+                l = new ArrayList<SigSimpleTuple>();
+                l.add(s);
+                hashMap.put(key,l);
+            }else {
+                l.add(s);
+            }
+        }
+
+        //System.out.print(hashMap.size());
+
+        int count = 0;
+        //match with tuples in R
+        for(SigSimpleTuple r:R) {
+            r.signature = Utils.create_sig_normal(r.setValues, sig_len);
+            //System.out.print(r.signature[0]);
+            //s.signature[0] & FIRSTBITS is the mask
+            //enumerate all subsignatures
+            int mask = r.signature[0] & BitOperations.FIRSTBITS;
+
+            //System.out.print(Integer.toBinaryString(mask));
+            //System.out.print(" ");
+
+            int key = 1;
+
+            if((mask & 1) == 1) {
+                List<SigSimpleTuple> l = hashMap.get(key);
+                if(l != null) {
+                    for(SigSimpleTuple s:l) {
+                        if((r.setSize >= s.setSize) && (Utils.compare_sig_contain(r.signature, s.signature)>=0)) {
+                            if(Utils.compare_set(r.setValues, s.setValues) >= 0) {
+                                count ++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            while(key != 0) {
+                key = mask & (key - mask);
+                List<SigSimpleTuple> l = hashMap.get(key);
+                //System.out.print(Integer.toBinaryString(key>>>20));System.out.print(" ");
+                if(l != null) {
+                    for(SigSimpleTuple s:l) {
+                        if((r.setSize >= s.setSize) && (Utils.compare_sig_contain(r.signature, s.signature)>=0)) {
+                            if(Utils.compare_set(r.setValues, s.setValues) >= 0) {
+                                count ++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            //System.out.print("\n");
+        }
+
+        System.out.println("SHJ will return "+Integer.toString(count)+" results");
+    }
+
+    /**
+     * SHJ, with an array instead of a hash table
+     * @param R
+     * @param S
+     * @param sig_len
+     */
+    public void SHJArray(ArrayList<SigSimpleTuple> R, ArrayList<SigSimpleTuple> S, int sig_len) {
+        //create signatures
+        //initially not too big, but big enough
+        ArrayList<SigSimpleTuple>[] map;
+        map = new ArrayList[(1<<12)];
+
+        //put all tuples in S to hashmap
+        for(SigSimpleTuple s:S) {
+            s.signature = Utils.create_sig_normal(s.setValues, sig_len);
+            int key = (BitOperations.FIRSTBITS & (s.signature[0]));
+            key = key >>> 20;
+            //System.out.print(key);
+            //System.out.print(" ");
+
+
+            ArrayList<SigSimpleTuple> l = map[key];
+            if(l == null) {
+                l = new ArrayList<SigSimpleTuple>();
+                l.add(s);
+                map[key] = l;
+            }else {
+                l.add(s);
+            }
+        }
+
+//        int size= 0;
+//        for(int i = 0; i < map.length; i++) {
+//            if(map[i] != null) {
+//                size++;
+//            }
 //        }
-//
-//        for(SigSimpleTuple s:S) {
-//            s.signature = Utils.create_sig_normal(s.setValues, sig_len);
-//            //enumerate all subsignatures
-//
-//            //if one such signature is in hashMap,
-//            //return iterate in the bucket and compare real set value
-//        }
-//        //create hash map on R.signature
-//        //int hashmap_size = new Double(Math.sqrt(R.size())).intValue();
-//
-//
-//    }
+//        System.out.print(size);
+
+
+        //System.out.println("put S in hashmap done");
+
+        int count = 0;
+        //match with tuples in R
+        for(SigSimpleTuple r:R) {
+            r.signature = Utils.create_sig_normal(r.setValues, sig_len);
+            //System.out.print(r.signature[0]);
+            //s.signature[0] & FIRSTBITS is the mask
+            //enumerate all subsignatures
+            int mask = (BitOperations.FIRSTBITS & r.signature[0])>>>20;
+
+            //System.out.print(Integer.toBinaryString(mask));System.out.print(",");
+           // mask = mask>>>20;
+            //System.out.print(r.signature[0]);
+            //System.out.print("mask:"+Integer.toBinaryString(mask)+" ");
+
+            //System.out.print((r.signature[0] & BitOperations.FIRSTBITS)>>>20);
+            //System.out.print(" ");
+
+
+            int key = 1;
+
+            if((mask & 1) == 1) {
+                List<SigSimpleTuple> l = map[key];
+                if(l != null) {
+                    for(SigSimpleTuple s:l) {
+                        if((r.setSize >= s.setSize) && (Utils.compare_sig_contain(r.signature, s.signature)>=0)) {
+                            if(Utils.compare_set(r.setValues, s.setValues) >= 0) {
+                                count ++;
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            while(key != 0) {
+                key = mask & (key - mask);
+                List<SigSimpleTuple> l = map[key];
+                //System.out.print(Integer.toBinaryString(key));System.out.print(" ");
+                if(l != null) {
+                    for(SigSimpleTuple s:l) {
+                        if((r.setSize >= s.setSize) && (Utils.compare_sig_contain(r.signature, s.signature)>=0)) {
+                            if(Utils.compare_set(r.setValues, s.setValues) >= 0) {
+                                count ++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            //System.out.print("\n");
+        }
+
+        System.out.println("SHJ Array will return "+Integer.toString(count)+" results");
+    }
+
+
 
 }

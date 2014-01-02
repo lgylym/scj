@@ -80,7 +80,7 @@ public class Utils {
      * @param sig2
      * @return
      */
-    public  static int compare_sig_contain(long[] sig1, long[] sig2) {
+    public  static int compare_sig_contain(int[] sig1, int[] sig2) {
         for(int i = 0; i < sig1.length; i++) {
             if(((~sig1[i])&(sig2[i]))!=0) {
                 return -1;
@@ -108,15 +108,15 @@ public class Utils {
      * @param sig_len how many integers we use to represent a signature
      * @return
      */
-    public static long[] create_sig_normal(int[] set, int sig_len) {
-        long[] signature = new long[sig_len];
+    public static int[] create_sig_normal(int[] set, int sig_len) {
+        int[] signature = new int[sig_len];
         int remainder = 0;
         int index = 0;
         int bit = 0;
         for(int i = 0; i < set.length; i++) {
-            remainder = set[i]%(Long.SIZE*sig_len);
-            index = remainder / Long.SIZE;
-            bit = remainder % Long.SIZE;
+            remainder = set[i]%(Integer.SIZE*sig_len);
+            index = remainder / Integer.SIZE;
+            bit = remainder % Integer.SIZE;
             signature[index] |= 1 << (bit);
         }
         return signature;

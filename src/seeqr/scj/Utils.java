@@ -137,26 +137,52 @@ public class Utils {
         return signature;
     }
 
+    /**
+     * return the subsets of a given integer mask
+     * @param mask
+     * @return
+     */
+    public static int[] getSubsets(int mask) {
+        int[] result = new int[1<<Integer.bitCount(mask)];
+        int temp = 1;
+        int i = 0;
+        if((mask & 1) == 1) {
+            result[i] = 1;
+            i++;
+        }
+        while(temp != 0) {
+            temp = mask & (temp - mask);
+            result[i] = temp;
+            i++;
+        }
+        return result;
+    }
+
+
+
     public static void main(String[] args) {
-        int[] set1 = {0,1,2,3,4,5,6,7};
-        int[] set2 = {1,2,3};
-        int[] set3 = {1,2,5,6,7,8};
-        int[] set4 = {64};
-        long[] sig1 = {1,10};
-        long[] sig2 = {1,10};
-        long[] sig3 = {2,10};
-        //System.out.print(compare_set(set1, set2));
-        assert compare_set(set1, set2) == 1;
-        assert compare_set(set2, set1) == -1;
-        assert compare_set(set1, set3) == -1;
-        assert compare_set(set1, set1) == 0;
-        assert compare_sig(sig1, sig2) == 0;
-        assert compare_sig(sig1, sig3) == -1;
-
-        assert create_sig_normal(set4, 1)[0] == 1;
-        assert create_sig_normal(set1, 1)[0] == 0xFF;
-
-        System.out.println(create_sig_bitset(set3,8).toString());
-        System.out.println(compare_sig_contain(create_sig_bitset(set2,8),create_sig_bitset(set3,8)));
+        int mask = 0x3;
+        int[] a = getSubsets(mask);
+        System.out.print(BitOperations.toStringBitStream(a));
+//        int[] set1 = {0,1,2,3,4,5,6,7};
+//        int[] set2 = {1,2,3};
+//        int[] set3 = {1,2,5,6,7,8};
+//        int[] set4 = {64};
+//        long[] sig1 = {1,10};
+//        long[] sig2 = {1,10};
+//        long[] sig3 = {2,10};
+//        //System.out.print(compare_set(set1, set2));
+//        assert compare_set(set1, set2) == 1;
+//        assert compare_set(set2, set1) == -1;
+//        assert compare_set(set1, set3) == -1;
+//        assert compare_set(set1, set1) == 0;
+//        assert compare_sig(sig1, sig2) == 0;
+//        assert compare_sig(sig1, sig3) == -1;
+//
+//        assert create_sig_normal(set4, 1)[0] == 1;
+//        assert create_sig_normal(set1, 1)[0] == 0xFF;
+//
+//        System.out.println(create_sig_bitset(set3,8).toString());
+//        System.out.println(compare_sig_contain(create_sig_bitset(set2,8),create_sig_bitset(set3,8)));
     }
 }

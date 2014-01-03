@@ -15,13 +15,17 @@ public class Generator {
      * @param setMaxRange the range the set value is allowed (exclusive)
      * @return
      */
+
+    protected static int tupleCounter = 0;//same tuple id must corresponds to the same set
+
     public static<T extends SimpleTuple> ArrayList<T> generateRandomRelation(
             int relationSize, int setMaxSize, int setMaxRange, Class<T> cls) throws Exception {
         ArrayList<T> result = new ArrayList<T>(relationSize);
         Random rng = new Random(); // Ideally just create one instance globally
         T tuple;
         int setSize;
-        for (int i = 0; i < relationSize; i++) {
+
+        for (int i = tupleCounter; i < relationSize+tupleCounter; i++) {
             setSize = rng.nextInt(setMaxSize)+1;
             tuple = cls.newInstance();
             tuple.tupleID = i;
@@ -29,6 +33,7 @@ public class Generator {
             tuple.setValues = generateIntArray(rng,setSize,setMaxRange);
             result.add(tuple);
         }
+        tupleCounter = tupleCounter+relationSize;
         //shuffle the list
         Collections.shuffle(result,rng);
         return result;
@@ -43,6 +48,34 @@ public class Generator {
             s.setSize = r.setSize;
             s.setValues = r.setValues;
             result.add(s);
+        }
+        return result;
+    }
+
+    public static  ArrayList<DAGSST> toDAGSST(ArrayList<SimpleTuple> relation) {
+        ArrayList<DAGSST> result = new ArrayList<DAGSST>(relation.size());
+        for(SimpleTuple r: relation) {
+            DAGSST d = new DAGSST();
+            d.tupleID = r.tupleID;
+            d.setSize = r.setSize;
+            d.setValues = r.setValues;
+            result.add(d);
+        }
+        return result;
+    }
+
+    public static <T extends SimpleTuple> ArrayList<T> transferRelation(ArrayList<SimpleTuple> relation, Class<T> cls) {
+        ArrayList<T> result = new ArrayList<T>(relation.size());
+        try{
+            for(SimpleTuple r: relation) {
+                T d = cls.newInstance();
+                d.tupleID = r.tupleID;
+                d.setSize = r.setSize;
+                d.setValues = r.setValues;
+                result.add(d);
+            }
+        }catch(Exception e) {
+            System.out.print(e);
         }
         return result;
     }

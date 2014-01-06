@@ -54,8 +54,49 @@ public class SimpleJoinAlgorithms {
                 }
             }
         }
-        System.out.println("NL signature will return "+Integer.toString(count)+" results");
+        //System.out.println("NL signature will return "+Integer.toString(count)+" results");
     }
+
+    /**
+     * nested loop join with signatures, do set compare before split point,
+     * doesn't perform better than the original
+     *
+     * @param R
+     * @param S
+     */
+    public void NLSignatureJoinSplit(ArrayList<SigSimpleTuple> R, ArrayList<SigSimpleTuple> S, int sig_len, int split) {
+        //create signatures
+        for(SigSimpleTuple r:R) {
+            r.signature = Utils.create_sig_normal(r.setValues, sig_len);
+        }
+
+        for(SigSimpleTuple s:S) {
+            s.signature = Utils.create_sig_normal(s.setValues, sig_len);
+        }
+        //compare
+        int count = 0;
+        for(SigSimpleTuple r:R) {
+            if(r.setSize <= split) {
+                for(SigSimpleTuple s:S) {
+                    if((Utils.compare_set(r.setValues, s.setValues) >= 0)) {
+                            //output;
+                            count ++;
+                        }
+                    }
+            } else {
+                for(SigSimpleTuple s:S) {
+                    if((r.setSize >= s.setSize) && (Utils.compare_sig_contain(r.signature, s.signature))>=0) {
+                        if(Utils.compare_set(r.setValues, s.setValues) >= 0) {
+                            //output;
+                            count ++;
+                        }
+                    }
+                }
+            }
+        }
+        //System.out.println("NL Split signature will return "+Integer.toString(count)+" results");
+    }
+
 
     /**
      * nested loop join with BitSet signature

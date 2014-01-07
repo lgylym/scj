@@ -38,15 +38,15 @@ public class MakeTests {
 //            System.out.print(estimatedTime/(1000000.0));
 //            System.out.print("ms\n");
 
-//            /****simple join algorithm with int array as signature*****************************************************/
-//            ArrayList<SigSimpleTuple> R1 = Generator.toSigSimpleTuples(R);
-//            ArrayList<SigSimpleTuple> S1 = Generator.toSigSimpleTuples(S);
-//            startTime = System.nanoTime();
-//            sja.NLSignatureJoin(R1,S1,sig_len/Integer.SIZE);
-//            estimatedTime = System.nanoTime() - startTime;
-//            System.out.print(estimatedTime/(1000000.0));
-//            System.out.print("ms\n");
-//            R1.clear();S1.clear();
+            /****simple join algorithm with int array as signature*****************************************************/
+            ArrayList<SigSimpleTuple> R1 = Generator.toSigSimpleTuples(R);
+            ArrayList<SigSimpleTuple> S1 = Generator.toSigSimpleTuples(S);
+            startTime = System.nanoTime();
+            sja.NLSignatureJoin(R1,S1,sig_len/Integer.SIZE);
+            estimatedTime = System.nanoTime() - startTime;
+            System.out.print(estimatedTime/(1000000.0));
+            System.out.print("ms\n");
+            R1.clear();S1.clear();
 //
 ////            /***simple join algorithm with bitset as signature*******************************************************/
 ////            ArrayList<BitsetSimpleTuple> R2 = Generator.toBigintSimpleTuples(R);
@@ -58,15 +58,15 @@ public class MakeTests {
 ////            System.out.print("ms\n");
 ////            R2.clear();S2.clear();
 //
-            /****SHJ algorithm with int array as signature********************************************************/
-            ArrayList<SigSimpleTuple> R3 = Generator.toSigSimpleTuples(R);
-            ArrayList<SigSimpleTuple> S3 = Generator.toSigSimpleTuples(S);
-            startTime = System.nanoTime();
-            sja.SHJ(R3,S3,sig_len/Integer.SIZE);
-            estimatedTime = System.nanoTime() - startTime;
-            System.out.print(estimatedTime/(1000000.0));
-            System.out.print("ms\n");
-            R3.clear();S3.clear();
+//            /****SHJ algorithm with int array as signature********************************************************/
+//            ArrayList<SigSimpleTuple> R3 = Generator.toSigSimpleTuples(R);
+//            ArrayList<SigSimpleTuple> S3 = Generator.toSigSimpleTuples(S);
+//            startTime = System.nanoTime();
+//            sja.SHJ(R3,S3,sig_len/Integer.SIZE);
+//            estimatedTime = System.nanoTime() - startTime;
+//            System.out.print(estimatedTime/(1000000.0));
+//            System.out.print("ms\n");
+//            R3.clear();S3.clear();
 //
 //            /****SHJ array algorithm with int array as signature********************************************************/
 //            ArrayList<SigSimpleTuple> R4 = Generator.toSigSimpleTuples(R);
@@ -79,15 +79,47 @@ public class MakeTests {
 //            R4.clear();S4.clear();
             /*******DSHJ algorithm using hash map***********************************************************************/
 
-            ArrayList<DAGSST> R5 = Generator.transferRelation(R, DAGSST.class);
-            ArrayList<DAGSST> S5 = Generator.transferRelation(S, DAGSST.class);
-            startTime = System.nanoTime();
+//            ArrayList<DAGSST> R5 = Generator.transferRelation(R, DAGSST.class);
+//            ArrayList<DAGSST> S5 = Generator.transferRelation(S, DAGSST.class);
+//            startTime = System.nanoTime();
+//
+//            dja.DSHJ(R5, S5, sig_len / Integer.SIZE);
+//            estimatedTime = System.nanoTime() - startTime;
+//            System.out.print(estimatedTime/(1000000.0));
+//            System.out.print("ms\n");
+//            R5.clear();S5.clear();
 
-            dja.DSHJ(R5, S5, sig_len / Integer.SIZE);
+            /****SHJ array algorithm with int array as signature********************************************************/
+            ArrayList<SigSimpleTuple> R6 = Generator.toSigSimpleTuples(R);
+            ArrayList<SigSimpleTuple> S6 = Generator.toSigSimpleTuples(S);
+            startTime = System.nanoTime();
+            sja.SHJBitmap(R6, S6, sig_len / Integer.SIZE, 12);
             estimatedTime = System.nanoTime() - startTime;
             System.out.print(estimatedTime/(1000000.0));
             System.out.print("ms\n");
-            R5.clear();S5.clear();
+
+            startTime = System.nanoTime();
+            sja.SHJBitmap(R6, S6, sig_len / Integer.SIZE, 13);
+            estimatedTime = System.nanoTime() - startTime;
+            System.out.print(estimatedTime/(1000000.0));
+            System.out.print("ms\n");
+
+            startTime = System.nanoTime();
+            sja.SHJBitmap(R6, S6, sig_len / Integer.SIZE, 14);
+            estimatedTime = System.nanoTime() - startTime;
+            System.out.print(estimatedTime/(1000000.0));
+            System.out.print("ms\n");
+
+            startTime = System.nanoTime();
+            sja.SHJBitmap(R6, S6, sig_len / Integer.SIZE, 15);
+            estimatedTime = System.nanoTime() - startTime;
+            System.out.print(estimatedTime/(1000000.0));
+            System.out.print("ms\n");
+
+            R6.clear();S6.clear();
+
+
+
         }catch(Exception e) {
             System.out.print(e);
         }

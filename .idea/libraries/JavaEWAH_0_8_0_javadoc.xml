@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="JavaEWAH-0.8.0-javadoc">
+    <CLASSES />
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/libs/JavaEWAH-0.8.0/JavaEWAH-0.8.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>

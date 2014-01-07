@@ -1,10 +1,13 @@
 package seeqr.scj;
 
 import java.util.ArrayList;
+import com.googlecode.javaewah.EWAHCompressedBitmap;
 import java.util.HashMap;
 import java.util.List;
 
 import com.google.common.primitives.Ints;
+import com.googlecode.javaewah.IntIterator;
+import com.googlecode.javaewah.IntIteratorOverIteratingRLW;
 
 /**
  * Created by yluo on 12/19/13.
@@ -302,6 +305,81 @@ public class SimpleJoinAlgorithms {
         System.out.println("SHJ Array will return "+Integer.toString(count)+" results");
     }
 
+    /**
+     * SHJ, with an array instead of a hash table, with bitmap (JavaEWAH ) instead of hashset
+     * we can use BitSet in java as well, not much difference, but here at least we save space
+     * @param R
+     * @param S
+     * @param sig_len
+     * @param useBitsInMap number of bits to use in map
+     */
+    public void SHJBitmap(ArrayList<SigSimpleTuple> R, ArrayList<SigSimpleTuple> S, int sig_len, int useBitsInMap) {
+        //create signatures
+        //initially not too big, but big enough
+        int bitmask = (1<<31)>>(useBitsInMap-1);//the first useBitsInMap bits set to 1
+        EWAHCompressedBitmap[] map;
+        map = new EWAHCompressedBitmap[(1<<useBitsInMap)];
+        for(int i = 0; i < map.length; i++) {
+            map[i] = new EWAHCompressedBitmap();
+        }
 
+        //put all tuples in S to hashmap
+        for(int i = 0; i < S.size(); i++) {
+            SigSimpleTuple s = S.get(i);
+            s.signature = Utils.create_sig_normal(s.setValues, sig_len);
+            int key = (bitmask & (s.signature[0]));
+            key = key >>> (32-useBitsInMap);
+            map[key].set(i);
+        }
+
+        int count = 0;
+        //match with tuples in R
+        for(SigSimpleTuple r:R) {
+            r.signature = Utils.create_sig_normal(r.setValues, sig_len);
+            int mask = (bitmask & r.signature[0])>>>(32-useBitsInMap);
+
+            int key = 1;
+            IntIterator iter;
+            if((mask & 1) == 1) {
+                iter = map[key].intIterator();
+                while (iter.hasNext()) {
+                    SigSimpleTuple s = S.get(iter.next());
+                    if((r.setSize >= s.setSize) && (Utils.compare_sig_contain(r.signature, s.signature)>=0)) {
+                        if(Utils.compare_set(r.setValues, s.setValues) >= 0) {
+                            count ++;
+                        }
+                    }
+                }
+            }
+
+            while(key != 0) {
+                key = mask & (key - mask);
+                //for BitSet: for (int i = bs.nextSetBit(0); i >= 0; i = bs.nextSetBit(i+1)) {
+                // operate on index i here
+                    //}
+
+                iter = map[key].intIterator();
+                while(iter.hasNext()) {
+                    SigSimpleTuple s = S.get(iter.next());
+                    if((r.setSize >= s.setSize) && (Utils.compare_sig_contain(r.signature, s.signature)>=0)) {
+                        if(Utils.compare_set(r.setValues, s.setValues) >= 0) {
+                            count ++;
+                        }
+                    }
+                }
+            }
+
+            //System.out.print("\n");
+        }
+
+        int temp = 0;
+        for(EWAHCompressedBitmap i:map) {
+            temp += i.sizeInBytes();
+
+        }
+        System.out.print(temp/1024 + "KB\n");
+
+        System.out.println("SHJ Bitmap will return " + Integer.toString(count) + " results");
+    }
 
 }

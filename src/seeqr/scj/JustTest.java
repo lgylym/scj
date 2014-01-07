@@ -13,7 +13,11 @@ public class JustTest {
     public static void main(String[] args) {
         JustTest jt = new JustTest();
         //jt.testSplit();
-        jt.testHashSet();
+        //jt.testHashSet();
+
+        int i = (1<<31)>>11;
+        System.out.print(Integer.toBinaryString(i));
+
 
 //        int threshold = 20000000;
 //        //int j = 0;

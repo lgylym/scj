@@ -1,12 +1,16 @@
 package seeqr.scj;
 
-/**
- * SimpleTuple with long_signature added
- * Created by yluo on 12/19/13.
- */
-public class SigSimpleTuple extends SimpleTuple {
-    protected int[] signature;
+import com.googlecode.javaewah.EWAHCompressedBitmap;
 
+import java.util.BitSet;
+
+/**
+ * Created by yluo on 1/7/14.
+ */
+public class BitmapSimpleTuple extends SigSimpleTuple {
+    protected EWAHCompressedBitmap long_signature;
+
+    //protected BitSet long_signature;
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("tuple:");
@@ -15,7 +19,8 @@ public class SigSimpleTuple extends SimpleTuple {
         sb.append(setSize);
         sb.append(",long_signature:");
 
-        sb.append(BitOperations.toStringBitStream(signature));
+        if(long_signature != null)
+        {sb.append(long_signature.toString());}
 
         sb.append("\nset value:");
 
@@ -26,4 +31,5 @@ public class SigSimpleTuple extends SimpleTuple {
         sb.append('\n');
         return sb.toString();
     }
+
 }

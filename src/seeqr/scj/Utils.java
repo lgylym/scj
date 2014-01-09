@@ -1,5 +1,12 @@
 package seeqr.scj;
 
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
+import com.googlecode.javaewah.BitmapStorage;
+import com.googlecode.javaewah.EWAHCompressedBitmap;
+import com.googlecode.javaewah.EWAHIterator;
+import com.googlecode.javaewah.IteratingBufferedRunningLengthWord;
+
 import java.math.BigInteger;
 import java.util.BitSet;
 
@@ -7,6 +14,9 @@ import java.util.BitSet;
  * Created by yluo on 12/19/13.
  */
 public class Utils {
+
+    static HashFunction hf = Hashing.murmur3_32();
+
     /**
      * compare two sets, return whether set1 \supset set2
      * if set1 == set2, return 0;
@@ -102,29 +112,80 @@ public class Utils {
     }
 
     /**
-     * the normal implementation, using modulo sig_len
-     * one element -> one bit in the signature
-     * @param set
-     * @param sig_len how many integers we use to represent a signature
-     * @return
+     * and not, return true if the result is empty
+     * a and not b
+     * @param b
      */
-    public static int[] create_sig_normal(int[] set, int sig_len) {
-        int[] signature = new int[sig_len];
-        int remainder = 0;
-        int index = 0;
-        int bit = 0;
-        for(int i = 0; i < set.length; i++) {
-            remainder = set[i]%(Integer.SIZE*sig_len);
-            index = remainder / Integer.SIZE;
-            bit = remainder % Integer.SIZE;
-            signature[index] |= 1 << (bit);
+    public static boolean andNotTrue(final EWAHCompressedBitmap a, final EWAHCompressedBitmap b
+                                  ) {
+        //final BitmapStorage container = new EWAHCompressedBitmap();
+        final EWAHIterator i = a.getEWAHIterator();
+        final EWAHIterator j = b.getEWAHIterator();
+        final IteratingBufferedRunningLengthWord rlwi = new IteratingBufferedRunningLengthWord(i);
+        final IteratingBufferedRunningLengthWord rlwj = new IteratingBufferedRunningLengthWord(j);
+        while ((rlwi.size()>0) && (rlwj.size()>0)) {
+            final int nbre_literal = Math.min(rlwi.getNumberOfLiteralWords(),
+                    rlwj.getNumberOfLiteralWords());
+            if (nbre_literal > 0) {
+                for (int k = 0; k < nbre_literal; ++k){
+                    if((rlwi.getLiteralWordAt(k) & (~rlwj.getLiteralWordAt(k))) != 0) {
+                        return false;
+                    }
+                }
+                rlwi.discardFirstWords(nbre_literal);
+                rlwj.discardFirstWords(nbre_literal);
+            }
+        }
+        return true;
+    }
+
+
+
+
+        /**
+         * the normal implementation, using modulo sig_len
+         * one element -> one bit in the long_signature
+         * @param set
+         * @param sig_len how many integers we use to represent a long_signature
+         * @return
+         */
+        public static int[] create_sig_normal(int[] set, int sig_len) {
+            int[] signature = new int[sig_len];
+            int remainder = 0;
+            int index = 0;
+            int bit = 0;
+            for(int i = 0; i < set.length; i++) {
+                //TODO
+                // = hf.hashInt(set[i]).asInt()%(Integer.SIZE*sig_len);
+                //remainder = remainder < 0? -remainder : remainder;
+                remainder = set[i]%(Integer.SIZE*sig_len);
+                index = remainder / Integer.SIZE;
+                bit = remainder % Integer.SIZE;
+                //System.out.print(index+","+bit);
+                signature[index] |= 1 << (bit);
+            }
+            return signature;
+        }
+
+    public static EWAHCompressedBitmap create_sig_bitmap(int[] set) {
+        EWAHCompressedBitmap signature = new EWAHCompressedBitmap();
+        for(int element:set) {
+            signature.set(element);
+        }
+        return signature;
+    }
+
+    public static BitSet create_sig_bitset(int[] set) {
+        BitSet signature = new BitSet();
+        for(int element:set) {
+            signature.set(element);
         }
         return signature;
     }
 
     /**
-     * one element -> one bit in the signature
-     * sig_len is the number of bits in the signature
+     * one element -> one bit in the long_signature
+     * sig_len is the number of bits in the long_signature
      * @param set
      * @param sig_len
      * @return

@@ -7,7 +7,7 @@ import java.util.*;
  */
 public class DAGJoinAlgorithms {
     /**
-     * DAG-based signature hash join, using hash map for SHJ
+     * DAG-based long_signature hash join, using hash map for SHJ
      * The setSize of each SigSimpleTuple has the following meanings:
      *   t.setSize > 0, t belongs to R
      *   t.setSize < 0, t belongs to S
@@ -42,7 +42,7 @@ public class DAGJoinAlgorithms {
         int count = 0;
 
         for(DAGSST t:oneRelation) {
-            //get signature
+            //get long_signature
 
             t.signature = Utils.create_sig_normal(t.setValues, sig_len);
             int row = (BitOperations.FIRSTBITS & (t.signature[0]))>>>20;

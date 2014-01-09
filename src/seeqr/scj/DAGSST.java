@@ -3,7 +3,7 @@ package seeqr.scj;
 import java.util.Comparator;
 
 /**
- * DAG-based signature simple tuple
+ * DAG-based long_signature simple tuple
  * Created by yluo on 1/3/14.
  */
 public class DAGSST extends SigSimpleTuple {
@@ -17,7 +17,7 @@ public class DAGSST extends SigSimpleTuple {
         sb.append(setSize);
 
         if(signature != null){
-            sb.append(",signature:");
+            sb.append(",long_signature:");
             sb.append(BitOperations.toStringBitStream(signature));
         }
         sb.append("\nset value:");

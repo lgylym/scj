@@ -52,6 +52,18 @@ public class Generator {
         return result;
     }
 
+    public static ArrayList<BitmapSimpleTuple> toBitmapSimpleTuples(ArrayList<SimpleTuple> relation) {
+        ArrayList<BitmapSimpleTuple> result = new ArrayList<BitmapSimpleTuple>(relation.size());
+        for(SimpleTuple r : relation) {
+            BitmapSimpleTuple s = new BitmapSimpleTuple();
+            s.tupleID = r.tupleID;
+            s.setSize = r.setSize;
+            s.setValues = r.setValues;
+            result.add(s);
+        }
+        return result;
+    }
+
     public static  ArrayList<DAGSST> toDAGSST(ArrayList<SimpleTuple> relation) {
         ArrayList<DAGSST> result = new ArrayList<DAGSST>(relation.size());
         for(SimpleTuple r: relation) {

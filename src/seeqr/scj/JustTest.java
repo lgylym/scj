@@ -1,5 +1,8 @@
 package seeqr.scj;
 
+import com.google.common.hash.HashCode;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.util.ArrayList;
@@ -15,8 +18,18 @@ public class JustTest {
         //jt.testSplit();
         //jt.testHashSet();
 
-        int i = (1<<31)>>11;
-        System.out.print(Integer.toBinaryString(i));
+        //int i = (1<<31)>>11;
+        //System.out.print(Integer.toBinaryString(i));
+
+        long temp = (long)50000*(long)50000;
+        System.out.print(temp);
+//        HashFunction hf = Hashing.murmur3_32();
+//        for(int i = 0; i < 10; i++){
+//        System.out.print(hf.hashInt(i).asInt()+" ");}
+//
+//        for(int i = 0; i < 10; i++){
+//            System.out.print(hf.newHasher().putInt(i).hash().asInt()+" ");}
+
 
 
 //        int threshold = 20000000;
@@ -92,7 +105,7 @@ public class JustTest {
 
             DescriptiveStatistics stats = new DescriptiveStatistics();
 
-            {//test signature op
+            {//test long_signature op
                 for(SigSimpleTuple r:R1) {
                     r.signature = Utils.create_sig_normal(r.setValues, sig_len);
                 }

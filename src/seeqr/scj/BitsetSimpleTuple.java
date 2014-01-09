@@ -14,7 +14,7 @@ public class BitsetSimpleTuple extends SimpleTuple {
         sb.append(tupleID);
         sb.append(",set size:");
         sb.append(setSize);
-        sb.append(",signature:");
+        sb.append(",long_signature:");
         sb.append(signature.toString());
 
         sb.append("\nset value:");

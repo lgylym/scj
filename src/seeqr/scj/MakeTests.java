@@ -19,7 +19,7 @@ public class MakeTests {
 
         long startTime;
         long estimatedTime;
-        int relationSize = 10000;
+        int relationSizeBase = 10000;
         int maxSetSize = 1<<7;//128
         int maxSetPool = 1<<10;//Integer.MAX_VALUE;//1<<8;////1024
         int sig_len = 32<<2; //better to be a multiplier of Integer.SIZE (32),128
@@ -81,8 +81,8 @@ public class MakeTests {
         //SHJ test
         for(int i = 1; i < 6; i++) {
             try{
-                ArrayList<SimpleTuple> R = Generator.generateRandomRelation(i*10000, maxSetSize, maxSetPool, SimpleTuple.class);
-                ArrayList<SimpleTuple> S = Generator.generateRandomRelation(i*10000, maxSetSize, maxSetPool, SimpleTuple.class);
+                ArrayList<SimpleTuple> R = Generator.generateRandomRelation(i*relationSizeBase, maxSetSize, maxSetPool, SimpleTuple.class);
+                ArrayList<SimpleTuple> S = Generator.generateRandomRelation(i*relationSizeBase, maxSetSize, maxSetPool, SimpleTuple.class);
 
                 ArrayList<SigSimpleTuple> R1 = Generator.toSigSimpleTuples(R);
                 ArrayList<SigSimpleTuple> S1 = Generator.toSigSimpleTuples(S);
@@ -94,7 +94,7 @@ public class MakeTests {
                 int bitcount = (int)Math.floor(Math.log(i*10000)/Math.log(2));
                 System.out.print("*"+bitcount);
                 startTime = System.nanoTime();
-                sja.SHJ(R1, S1, sig_len / Integer.SIZE, bitcount-1);
+                sja.SHJ(R1, S1, sig_len / Integer.SIZE, bitcount);
                 estimatedTime = System.nanoTime() - startTime;
                 System.out.print(estimatedTime/(1000000.0));
                 System.out.print("ms\n");

@@ -142,30 +142,47 @@ public class Utils {
 
 
 
-        /**
-         * the normal implementation, using modulo sig_len
-         * one element -> one bit in the long_signature
-         * @param set
-         * @param sig_len how many integers we use to represent a long_signature
-         * @return
-         */
-        public static int[] create_sig_normal(int[] set, int sig_len) {
-            int[] signature = new int[sig_len];
-            int remainder = 0;
-            int index = 0;
-            int bit = 0;
-            for(int i = 0; i < set.length; i++) {
-                //TODO
-                // = hf.hashInt(set[i]).asInt()%(Integer.SIZE*sig_len);
-                //remainder = remainder < 0? -remainder : remainder;
-                remainder = set[i]%(Integer.SIZE*sig_len);
-                index = remainder / Integer.SIZE;
-                bit = remainder % Integer.SIZE;
-                //System.out.print(index+","+bit);
-                signature[index] |= 1 << (bit);
-            }
-            return signature;
+    /**
+     * the normal implementation, using modulo sig_len
+     * one element -> one bit in the long_signature
+     * @param set
+     * @param sig_len how many integers we use to represent a long_signature
+     * @return
+     */
+    public static int[] create_sig_normal(int[] set, int sig_len) {
+        int[] signature = new int[sig_len];
+        int remainder = 0;
+        int index = 0;
+        int bit = 0;
+        for(int i = 0; i < set.length; i++) {
+            //TODO
+            // = hf.hashInt(set[i]).asInt()%(Integer.SIZE*sig_len);
+            //remainder = remainder < 0? -remainder : remainder;
+            remainder = set[i]%(Integer.SIZE*sig_len);
+            index = remainder / Integer.SIZE;
+            bit = remainder % Integer.SIZE;
+            //System.out.print(index+","+bit);
+            signature[index] |= 1 << (bit);
         }
+        return signature;
+    }
+
+    /**
+     * bit_count is smaller than 32
+     * @param set
+     * @param bit_count
+     * @return
+     */
+    public static int create_hashkey(int[] set, int bit_count) {
+        int result = 0;
+        int bit;
+        for(int i = 0; i < set.length; i++) {
+            bit = set[i]%bit_count;
+            result |= 1<<bit;
+        }
+        return result;
+    }
+
 
     public static EWAHCompressedBitmap create_sig_bitmap(int[] set) {
         EWAHCompressedBitmap signature = new EWAHCompressedBitmap();
@@ -220,12 +237,106 @@ public class Utils {
     }
 
 
+    /**
+     * return the biggest subset that is smaller than value
+     * @param mask
+     * @param value
+     * @return
+     */
+    public static int nextSmall(int mask, int value) {
+        int result = 0;
+        int m;
+        int v;
+        for(int i = Integer.SIZE -1 ; i >= 0 ; i--) {
+            m = mask & (1<<i);
+            v = value & (1<<i);
+            //System.out.println(Integer.toBinaryString(result));
+            //System.out.print(m+","+v+"\n");
+
+            if((m == v) || (m != 0)) {
+                result |= v;
+            }else {
+                int tailmask = 0xffffffff >>> (Integer.SIZE-i-1);
+                //System.out.println(Integer.toBinaryString(tailmask));
+                tailmask = tailmask & mask;
+                result = result | tailmask;
+                break;
+            }
+        }
+        return result;
+        //Integer.numberOfLeadingZeros(result);
+    }
+
+    public static int nextSmallBitOP(int mask, int value) {
+        int temp = (value ^ mask) & value;
+        int i = Integer.numberOfLeadingZeros(temp);
+        if(i == 0) {return mask;}
+
+        int prefix = (1<<31)>>(i-1);//
+        //int result = prefix & value;
+        //result = result | ((~prefix) & mask);
+        return (prefix & value) | ((~prefix) & mask);
+    }
+
+
+    /**
+     * sig1 = sig1 OR sig2
+     * @param sig1
+     * @param sig2
+     * @return
+     */
+    public static void signatureOR(int[] sig1, int[] sig2) {
+        for(int i = 0; i < sig1.length; i++) {
+            sig1[i] = sig1[i] | sig2[i];
+        }
+    }
+
 
     public static void main(String[] args) {
-        int mask = 0x3;
-        int[] a = getSubsets(mask);
-        System.out.print(BitOperations.toStringBitStream(a));
-//        int[] set1 = {0,1,2,3,4,5,6,7};
+        //int mask = 0x3;
+        //int[] a = getSubsets(mask);
+        //System.out.print(BitOperations.toStringBitStream(a));
+        //int[] set1 = {0,1,2,3,4,5,7};
+
+        //System.out.println(Integer.toBinaryString(nextSmall(0x1,9)));
+        //System.out.print(Integer.toBinaryString(nextSmallBitOP(0x1,9)));
+
+        int threshold = 10240;
+        long start = 0;
+
+//        start = System.nanoTime();
+//        for(int i = 0; i < threshold; i++) {
+//            for(int j = 0; j < threshold; j++) {
+//                nextSmall(i,j);
+//            }
+//        }
+//        System.out.println(System.nanoTime()-start);
+
+        start = System.nanoTime();
+        for(int i = 0; i < threshold; i++) {
+            for(int j = 0; j < threshold; j++) {
+                nextSmallBitOP(i, j);
+//                if(nextSmall(i,j) != nextSmallBitOP(i, j)) {
+//                    System.out.print(i+","+j);
+//                }
+            }
+        }
+        System.out.println(System.nanoTime()-start);
+
+
+        start = System.nanoTime();
+        long k = 0xFF;
+        for(int i = 0; i < threshold; i++) {
+            for(int j = 0; j < threshold; j++) {
+                k= k & i & j;
+//                if(nextSmall(i,j) != nextSmallBitOP(i, j)) {
+//                    System.out.print(i+","+j);
+//                }
+            }
+        }
+        System.out.print(System.nanoTime()-start);
+
+
 //        int[] set2 = {1,2,3};
 //        int[] set3 = {1,2,5,6,7,8};
 //        int[] set4 = {64};

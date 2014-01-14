@@ -17,12 +17,12 @@ public class JustTest {
         JustTest jt = new JustTest();
         //jt.testSplit();
         //jt.testHashSet();
-
+        jt.enumerateDescending(0x5131);
         //int i = (1<<31)>>11;
         //System.out.print(Integer.toBinaryString(i));
 
-        long temp = (long)50000*(long)50000;
-        System.out.print(temp);
+        //long temp = (long)50000*(long)50000;
+        //System.out.print(temp);
 //        HashFunction hf = Hashing.murmur3_32();
 //        for(int i = 0; i < 10; i++){
 //        System.out.print(hf.hashInt(i).asInt()+" ");}
@@ -84,6 +84,31 @@ public class JustTest {
 
     }
 
+
+    public void enumerateDescending(int mask) {
+
+        int[] key={mask};
+        while(true) {
+            System.out.println((key[0]));
+            if(key[0] == 0) {
+                break;
+            }
+            key[0] = (key[0]-1)&mask;
+        }
+
+
+
+//        int[] key = {1};
+//        //int[] t = {0};
+//        key[0] = mask & (-mask);
+//        System.out.println(BitOperations.toStringBitStream(key));
+//        while(key[0] != 0) {
+//            //key[0] = mask & (mask - key[0]);
+//            //System.out.println(BitOperations.toStringBitStream(t));
+//            key[0] = mask & (key[0] - mask);
+//            System.out.println(BitOperations.toStringBitStream(key));
+//        }
+    }
 
     public void testHashSet() {
         long startTime;

@@ -129,6 +129,15 @@ public class BitOperations {
     }
 
 
+    public static int number_of_ones(int x) {
+        int total_ones = 0;
+        while (x != 0) {
+            x = x & (x-1);
+            total_ones++;
+        }
+        return total_ones;
+    }
+
     public static void main(String[] args) {
         /*
         int[] a = new int[3];

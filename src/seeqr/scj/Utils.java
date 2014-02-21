@@ -29,6 +29,9 @@ public class Utils {
      * @param set2
      */
     public static int compare_set(int[] set1, int[] set2) {
+
+        //long start = System.nanoTime();
+
         int i = 0;
         int j = 0;
         int len1 = set1.length;
@@ -39,6 +42,7 @@ public class Utils {
                 if(set1[i] == set2[j]) {
                     i++;j++;
                 }else if(set1[i] > set2[j]) {
+                    //MakeTests.set_compare += System.nanoTime() - start;
                     return -1;
                 }else {
                     i++;
@@ -48,12 +52,52 @@ public class Utils {
         }else if(len1 == len2) {//equality
             while(i < len1) {
                 if(set1[i] != set2[i]) {
+                    //MakeTests.set_compare += System.nanoTime() - start;
                     return -1;
                 }
                 i++;
             }
+            //MakeTests.set_compare += System.nanoTime() - start;
             return 0;
         }else {
+            //MakeTests.set_compare += System.nanoTime() - start;
+            return -1;
+        }
+    }
+
+    public static int compare_set_measure(int[] set1, int[] set2) {
+
+        long start = System.nanoTime();
+
+        int i = 0;
+        int j = 0;
+        int len1 = set1.length;
+        int len2 = set2.length;
+
+        if(len1 > len2) {//containment
+            while((i < len1)&&(j < len2)) {
+                if(set1[i] == set2[j]) {
+                    i++;j++;
+                }else if(set1[i] > set2[j]) {
+                    MakeTests.set_compare += System.nanoTime() - start;
+                    return -1;
+                }else {
+                    i++;
+                }
+            }
+            return (j == len2)?1:-1;
+        }else if(len1 == len2) {//equality
+            while(i < len1) {
+                if(set1[i] != set2[i]) {
+                    MakeTests.set_compare += System.nanoTime() - start;
+                    return -1;
+                }
+                i++;
+            }
+            MakeTests.set_compare += System.nanoTime() - start;
+            return 0;
+        }else {
+            MakeTests.set_compare += System.nanoTime() - start;
             return -1;
         }
     }
@@ -96,6 +140,26 @@ public class Utils {
                 return -1;
             }
         }
+//        for(int i = sig1.length - 1; i >= 0; i--) {
+//            if(((~sig1[i])&(sig2[i]))!=0) {
+//                return -1;
+//            }
+//        }
+        return 1;
+    }
+
+    public  static int compare_sig_contain_measure(int[] sig1, int[] sig2) {
+
+        long start = System.nanoTime();
+        for(int i = 0; i < sig1.length; i++) {
+            if(((~sig1[i])&(sig2[i]))!=0) {
+                MakeTests.sig_compare_time[i] += System.nanoTime()-start;
+                MakeTests.sig_compare_call[i] ++;
+                return -1;
+            }
+        }
+        MakeTests.sig_compare_time[3] += System.nanoTime()-start;
+        MakeTests.sig_compare_call[3] ++;
         return 1;
     }
 

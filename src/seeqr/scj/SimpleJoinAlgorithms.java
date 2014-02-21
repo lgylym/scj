@@ -1,5 +1,6 @@
 package seeqr.scj;
 
+import java.math.BigInteger;
 import java.util.*;
 
 import com.google.common.collect.HashBasedTable;
@@ -7,6 +8,8 @@ import com.google.common.collect.Table;
 import com.googlecode.javaewah.EWAHCompressedBitmap;
 
 import com.googlecode.javaewah.IntIterator;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import sun.java2d.pipe.SpanShapeRenderer;
 
 /**
  * Created by yluo on 12/19/13.
@@ -38,7 +41,7 @@ public class SimpleJoinAlgorithms {
     public void NLSignatureJoin(ArrayList<SigSimpleTuple> R, ArrayList<SigSimpleTuple> S, int sig_len) {
         //create signatures
         //long used = 0;
-        //long start = 0;
+        //long start = System.nanoTime();
 
         for(SigSimpleTuple r:R) {
             r.signature = Utils.create_sig_normal(r.setValues, sig_len);
@@ -47,13 +50,13 @@ public class SimpleJoinAlgorithms {
         for(SigSimpleTuple s:S) {
             s.signature = Utils.create_sig_normal(s.setValues, sig_len);
         }
-
+        //System.out.println((System.nanoTime() - start)/1000000);
         //DescriptiveStatistics stats = new DescriptiveStatistics();
 
         //compare
 
         long count = 0;
-        long temp = 0;
+        //long temp = 0;
         for(SigSimpleTuple r:R) {
 
             //int result = 0;
@@ -61,7 +64,7 @@ public class SimpleJoinAlgorithms {
             for(SigSimpleTuple s:S) {
                 //
                 if((r.setSize >= s.setSize) && (Utils.compare_sig_contain(r.signature, s.signature))>=0) {
-                    temp++;
+                    //temp++;
                     if(Utils.compare_set(r.setValues, s.setValues) >= 0) {
                         //output;
                         count ++;
@@ -76,9 +79,61 @@ public class SimpleJoinAlgorithms {
         }
         System.out.println("NL signature will return "+Long.toString(count)+" results");
         System.out.println(count/((long)R.size()*(long)R.size()+0.0));//result percentage
-        System.out.println(temp/((long)R.size()*(long)R.size()+0.0));//P_hit
+        //System.out.println(temp/((long)R.size()*(long)R.size()+0.0));//P_hit
         //System.out.println(stats.getPercentile(50) + "," + stats.getMean() + "," + stats.getMax());
+        //System.out.println("sig compare take "+MakeTests.sig_compare/1000000+"ms");
+        //System.out.println("set compare take "+MakeTests.set_compare/1000000+"ms");
+
     }
+
+    public void NLSignatureJoinMeasure(ArrayList<SigSimpleTuple> R, ArrayList<SigSimpleTuple> S, int sig_len) {
+        //create signatures
+        //long used = 0;
+        long start = System.nanoTime();
+
+        for(SigSimpleTuple r:R) {
+            r.signature = Utils.create_sig_normal(r.setValues, sig_len);
+        }
+
+        for(SigSimpleTuple s:S) {
+            s.signature = Utils.create_sig_normal(s.setValues, sig_len);
+        }
+        System.out.println("create signatures take "+(System.nanoTime() - start)/1000000+" ms");
+        //DescriptiveStatistics stats = new DescriptiveStatistics();
+
+        //compare
+
+        long count = 0;
+        long temp = 0;
+        MakeTests.reset_counters();
+
+        for(SigSimpleTuple r:R) {
+
+            //int result = 0;
+
+            for(SigSimpleTuple s:S) {
+                //
+                if((r.setSize >= s.setSize) && (Utils.compare_sig_contain_measure(r.signature, s.signature))>=0) {
+                    temp++;
+                    if(Utils.compare_set_measure(r.setValues, s.setValues) >= 0) {
+                        //output;
+                        count ++;
+                        //result ++;
+                    }
+                    //used += System.nanoTime() - start;
+                }
+
+            }
+
+            //stats.addValue(result);
+        }
+        System.out.println("NL signature will return "+Long.toString(count)+" results");
+        //System.out.println(count/((long)R.size()*(long)R.size()+0.0));//result percentage
+        //System.out.println(temp/((long)R.size()*(long)R.size()+0.0));//P_hit
+        //System.out.println(stats.getPercentile(50) + "," + stats.getMean() + "," + stats.getMax());
+        MakeTests.print_counters();
+    }
+
 
     /**
      * nested loop join with bitmap as the set presentation
@@ -226,9 +281,12 @@ public class SimpleJoinAlgorithms {
         final int bitmask = (1<<31)>>(useBitsInMap-1);//the first useBitsInMap bits set to 1
 
 
-        HashSet<BitSet> set = new HashSet<BitSet>();
+        //HashSet<BitSet> set = new HashSet<BitSet>();
 
-        
+
+
+
+        //long startTime = System.nanoTime();
         //int[] newsig = new int[4];
 
         //put all tuples in S to hashmap
@@ -237,7 +295,7 @@ public class SimpleJoinAlgorithms {
 
             //Utils.signatureOR(newsig,s.signature);
 
-            set.add(Utils.create_sig_bitset(s.setValues, sig_len * Integer.SIZE));
+            //set.add(Utils.create_sig_bitset(s.setValues, sig_len * Integer.SIZE));
             int key = bitmask & (s.signature[0]);
             //int key = Utils.create_hashkey(s.setValues,useBitsInMap);
             List<SigSimpleTuple> l = hashMap.get(key);
@@ -250,22 +308,25 @@ public class SimpleJoinAlgorithms {
             }
         }
 
+        //long estimatedTime = System.nanoTime() - startTime;
         //System.out.println(BitOperations.toStringBitStream(newsig));
-
+        //System.out.println("build hash table" + estimatedTime / (1000000.0) + " ms");
         int output = 0;
 
-        for(BitSet i:set) {
-            for(BitSet j:set) {
-                if(Utils.compare_sig_contain(i,j)) {
-                    output++;
-                }
-            }
-        }
-        System.out.print("----"+set.size()+","+output);
+//        for(BitSet i:set) {
+//            for(BitSet j:set) {
+//                if(Utils.compare_sig_contain(i,j)) {
+//                    output++;
+//                }
+//            }
+//        }
+//        System.out.print("----"+set.size()+","+output);
 
         int count = 0;
-        int temp = 0;
-        int phit = 0;
+        //int temp = 0;
+        //int phit = 0;
+        //int hash_probe = 0;
+        //int hash_probe_success = 0;
         //match with tuples in R
         for(SigSimpleTuple r:R) {
             r.signature = Utils.create_sig_normal(r.setValues, sig_len);
@@ -282,12 +343,15 @@ public class SimpleJoinAlgorithms {
 
 
             if((mask & 1) == 1) {
+                //hash_probe ++;
                 List<SigSimpleTuple> l = hashMap.get(key);
                 if(l != null) {
+                    //hash_probe_success ++;
+
                     for(SigSimpleTuple s:l) {
-                        temp++;
+                        //temp++;
                         if((r.setSize >= s.setSize) && (Utils.compare_sig_contain(r.signature, s.signature)>=0)) {
-                            phit++;
+                            //phit++;
                             if(Utils.compare_set(r.setValues, s.setValues) >= 0) {
                                 count ++;
                             }
@@ -298,14 +362,136 @@ public class SimpleJoinAlgorithms {
 
             while(key != 0) {
                 key = mask & (key - mask);
+                //hash_probe ++;
                 List<SigSimpleTuple> l = hashMap.get(key);
                 //System.out.print(Integer.toBinaryString(key>>>20));System.out.print(" ");
                 if(l != null) {
+                    //hash_probe_success ++;
+                    for(SigSimpleTuple s:l) {
+                        //temp++;
+                        if((r.setSize >= s.setSize) && (Utils.compare_sig_contain(r.signature, s.signature)>=0)) {
+                            //phit++;
+                            if(Utils.compare_set(r.setValues, s.setValues) >= 0) {
+                                count ++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            //System.out.print("\n");
+        }
+        System.out.println("SHJ will return "+Integer.toString(count)+" results");
+        //System.out.println("SHJ will return "+Integer.toString(count)+" results, "+(temp/((long)R.size()*(long)S.size()+0.0))
+        //    +","+(hashMap.keySet().size()+0.0)/(1<<useBitsInMap));
+        //System.out.println(phit/((long)R.size()*(long)S.size()+0.0));
+        //System.out.println(hash_probe/(long)R.size());// /((*(hashMap.keySet().size()+0.0))
+        //System.out.println(hash_probe_success/(long)R.size());
+        //System.out.println(hashMap.keySet().size());
+        //System.out.println(temp/(long)R.size());
+        //System.out.println("sig compare take "+MakeTests.sig_compare/1000000+"ms");
+        //System.out.println("set compare take "+MakeTests.set_compare/1000000+"ms");
+    }
+
+
+    public void SHJMeasure(ArrayList<SigSimpleTuple> R, ArrayList<SigSimpleTuple> S, int sig_len, int useBitsInMap) {
+        //create signatures
+        //initially not too big, but big enough
+        HashMap<Integer,List<SigSimpleTuple>> hashMap = new HashMap<Integer, List<SigSimpleTuple>>(S.size()/2);
+        final int bitmask = (1<<31)>>(useBitsInMap-1);//the first useBitsInMap bits set to 1
+
+
+        //HashSet<BitSet> set = new HashSet<BitSet>();
+
+
+
+
+        long startTime = System.nanoTime();
+        //int[] newsig = new int[4];
+
+        //put all tuples in S to hashmap
+        for(SigSimpleTuple s:S) {
+            s.signature = Utils.create_sig_normal(s.setValues, sig_len);
+
+            //Utils.signatureOR(newsig,s.signature);
+
+            //set.add(Utils.create_sig_bitset(s.setValues, sig_len * Integer.SIZE));
+            int key = bitmask & (s.signature[0]);
+            //int key = Utils.create_hashkey(s.setValues,useBitsInMap);
+            List<SigSimpleTuple> l = hashMap.get(key);
+            if(l == null) {
+                l = new ArrayList<SigSimpleTuple>();
+                l.add(s);
+                hashMap.put(key,l);
+            }else {
+                l.add(s);
+            }
+        }
+
+        long estimatedTime = System.nanoTime() - startTime;
+        //System.out.println(BitOperations.toStringBitStream(newsig));
+        System.out.println("build hash table take " + estimatedTime / 1000000 + " ms");
+        int output = 0;
+
+//        for(BitSet i:set) {
+//            for(BitSet j:set) {
+//                if(Utils.compare_sig_contain(i,j)) {
+//                    output++;
+//                }
+//            }
+//        }
+//        System.out.print("----"+set.size()+","+output);
+
+        int count = 0;
+        int temp = 0;
+        int phit = 0;
+        int hash_probe = 0;
+        int hash_probe_success = 0;
+        MakeTests.reset_counters();
+        //match with tuples in R
+        for(SigSimpleTuple r:R) {
+            r.signature = Utils.create_sig_normal(r.setValues, sig_len);
+            //System.out.print(r.long_signature[0]);
+            //s.long_signature[0] & FIRSTBITS is the mask
+            //enumerate all subsignatures
+            int mask = bitmask & r.signature[0];
+            //int mask = Utils.create_hashkey(r.setValues,useBitsInMap);
+            //System.out.print(Integer.toBinaryString(mask));
+            //System.out.print(" ");
+
+            int key = 1;
+
+
+
+            if((mask & 1) == 1) {
+                hash_probe ++;
+                List<SigSimpleTuple> l = hashMap.get(key);
+                if(l != null) {
+                    hash_probe_success ++;
                     for(SigSimpleTuple s:l) {
                         temp++;
-                        if((r.setSize >= s.setSize) && (Utils.compare_sig_contain(r.signature, s.signature)>=0)) {
+                        if((r.setSize >= s.setSize) && (Utils.compare_sig_contain_measure(r.signature, s.signature)>=0)) {
                             phit++;
-                            if(Utils.compare_set(r.setValues, s.setValues) >= 0) {
+                            if(Utils.compare_set_measure(r.setValues, s.setValues) >= 0) {
+                                count ++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            while(key != 0) {
+                key = mask & (key - mask);
+                hash_probe ++;
+                List<SigSimpleTuple> l = hashMap.get(key);
+                //System.out.print(Integer.toBinaryString(key>>>20));System.out.print(" ");
+                if(l != null) {
+                    hash_probe_success ++;
+                    for(SigSimpleTuple s:l) {
+                        temp++;
+                        if((r.setSize >= s.setSize) && (Utils.compare_sig_contain_measure(r.signature, s.signature)>=0)) {
+                            phit++;
+                            if(Utils.compare_set_measure(r.setValues, s.setValues) >= 0) {
                                 count ++;
                             }
                         }
@@ -317,8 +503,61 @@ public class SimpleJoinAlgorithms {
         }
 
         System.out.println("SHJ will return "+Integer.toString(count)+" results, "+(temp/((long)R.size()*(long)S.size()+0.0))
-            +","+(hashMap.keySet().size()+0.0)/(1<<useBitsInMap));
+                +","+(hashMap.keySet().size()+0.0)/(1<<useBitsInMap));
         System.out.println(phit/((long)R.size()*(long)S.size()+0.0));
+        System.out.println(hash_probe/(long)R.size());// /((*(hashMap.keySet().size()+0.0))
+        System.out.println(hash_probe_success/(long)R.size());
+        System.out.println(hashMap.keySet().size());
+        System.out.println(temp/(long)R.size());
+        MakeTests.print_counters();
+
+        long sum = 0;
+        for(int i = 0; i < 4; i++) {
+            sum += MakeTests.sig_compare_call[i];
+        }
+
+        System.out.println("calls to sigcompare " + sum);
+
+        DescriptiveStatistics stats = new DescriptiveStatistics();
+        //ones in hash map key
+        for(int key:hashMap.keySet()) {
+                stats.addValue(BitOperations.number_of_ones(key));
+        }
+
+        System.out.println(stats.getMin()+","+stats.getMax()+","+stats.getMean()+","+stats.getPercentile(50));
+
+        //onese in signature[0]
+        stats.clear();
+        for(SigSimpleTuple r:R) {
+            stats.addValue(BitOperations.number_of_ones(r.signature[0]));
+        }
+
+        System.out.println(stats.getMin()+","+stats.getMax()+","+stats.getMean()+","+stats.getPercentile(50));
+
+        //list length in hashmap
+        stats.clear();
+
+        //sum = 0;
+        for(int key:hashMap.keySet()) {
+
+            if(hashMap.get(key).size() > 100) {
+                //System.out.println(Integer.toBinaryString(key));
+
+                for(SigSimpleTuple i:hashMap.get(key)) {
+                    stats.addValue(i.setSize);
+                }
+
+                //sum += hashMap.get(key).size();
+            }else {
+                //stats.addValue(hashMap.get(key).size());
+            }
+        }
+
+        System.out.println(stats.getMin()+","+stats.getMax()+","+stats.getMean()+","+stats.getPercentile(50));
+        //System.out.print(sum);
+
+
+
     }
 
 

@@ -537,24 +537,24 @@ public class SimpleJoinAlgorithms {
         //list length in hashmap
         stats.clear();
 
-        //sum = 0;
+        sum = 0;
         for(int key:hashMap.keySet()) {
 
-            if(hashMap.get(key).size() > 100) {
+            if(hashMap.get(key).size() > 500) {
                 //System.out.println(Integer.toBinaryString(key));
 
                 for(SigSimpleTuple i:hashMap.get(key)) {
                     stats.addValue(i.setSize);
                 }
 
-                //sum += hashMap.get(key).size();
+                sum += hashMap.get(key).size();
             }else {
                 //stats.addValue(hashMap.get(key).size());
             }
         }
 
         System.out.println(stats.getMin()+","+stats.getMax()+","+stats.getMean()+","+stats.getPercentile(50));
-        //System.out.print(sum);
+        System.out.print(sum);
 
 
 

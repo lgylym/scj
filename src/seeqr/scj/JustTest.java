@@ -14,10 +14,13 @@ import java.util.Random;
  */
 public class JustTest {
     public static void main(String[] args) {
-        JustTest jt = new JustTest();
+        System.out.print(Integer.numberOfLeadingZeros(-1));
+
+
+        //JustTest jt = new JustTest();
         //jt.testSplit();
         //jt.testHashSet();
-        jt.enumerateDescending(0x5131);
+        //jt.enumerateDescending(0x5131);
         //int i = (1<<31)>>11;
         //System.out.print(Integer.toBinaryString(i));
 

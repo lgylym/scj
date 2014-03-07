@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false" />
+  <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
+    <file url="file://$PROJECT_DIR$/src/org/ardverk/collection/AbstractKeyAnalyzer.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/org/ardverk/collection/AbstractPatriciaTrie.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/org/ardverk/collection/AbstractTrie.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/org/ardverk/collection/ByteArrayKeyAnalyzer.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/org/ardverk/collection/ByteKeyAnalyzer.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/org/ardverk/collection/CharArrayKeyAnalyzer.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/org/ardverk/collection/CharacterKeyAnalyzer.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/org/ardverk/collection/Cursor.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/org/ardverk/collection/DefaultKeyAnalyzer.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/org/ardverk/collection/IntegerKeyAnalyzer.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/org/ardverk/collection/Key.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/org/ardverk/collection/KeyAnalyzer.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/org/ardverk/collection/LongKeyAnalyzer.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/org/ardverk/collection/PatriciaTrie.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/org/ardverk/collection/ShortKeyAnalyzer.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/org/ardverk/collection/StringKeyAnalyzer.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/org/ardverk/collection/Trie.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/org/ardverk/collection/Tries.java" charset="UTF-8" />
+  </component>
 </project>
 

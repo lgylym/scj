@@ -11,7 +11,7 @@ public class MakeTests {
     public static long[] sig_compare_time = {0,0,0,0};//call time measure
     public static long[] sig_compare_call = {0,0,0,0};//call count
     public static long set_compare = 0;//call time measure
-    public final static int relationSizeBase = 10000;
+    public final static int relationSizeBase = 60000;
 
     public static void reset_counters() {
         for(int i = 0; i < 4; i++) {
@@ -117,33 +117,33 @@ public class MakeTests {
 
 
         //SHJ test
-        for(int i = 8; i < 11; i++) {
-            try{
-                ArrayList<SimpleTuple> R = Generator.generateRandomRelation(i*relationSizeBase, maxSetSize, maxSetPool, SimpleTuple.class);
-                ArrayList<SimpleTuple> S = Generator.generateRandomRelation(i*relationSizeBase, maxSetSize, maxSetPool, SimpleTuple.class);
-
-                ArrayList<SigSimpleTuple> R1 = Generator.toSigSimpleTuples(R);
-                ArrayList<SigSimpleTuple> S1 = Generator.toSigSimpleTuples(S);
-
-                SimpleJoinAlgorithms sja = new SimpleJoinAlgorithms();
-                //DAGJoinAlgorithms dja = new DAGJoinAlgorithms();
-
-                /****simple join algorithm*********************************************************************************/
-                int bitcount = (int)Math.floor(Math.log(i*10000)/Math.log(2));
-                System.out.print("*"+bitcount);
-                startTime = System.nanoTime();
-                sja.SHJ(R1, S1, sig_len / Integer.SIZE, bitcount);
-                estimatedTime = System.nanoTime() - startTime;
-                System.out.print(estimatedTime/(1000000.0));
-                System.out.print("ms\n");
-
-                R.clear();R1.clear();
-                S.clear();S1.clear();
-
-            }catch (Exception e) {
-                System.out.print(e);
-            }
-        }
+//        for(int i = 8; i < 11; i++) {
+//            try{
+//                ArrayList<SimpleTuple> R = Generator.generateRandomRelation(i*relationSizeBase, maxSetSize, maxSetPool, SimpleTuple.class);
+//                ArrayList<SimpleTuple> S = Generator.generateRandomRelation(i*relationSizeBase, maxSetSize, maxSetPool, SimpleTuple.class);
+//
+//                ArrayList<SigSimpleTuple> R1 = Generator.toSigSimpleTuples(R);
+//                ArrayList<SigSimpleTuple> S1 = Generator.toSigSimpleTuples(S);
+//
+//                SimpleJoinAlgorithms sja = new SimpleJoinAlgorithms();
+//                //DAGJoinAlgorithms dja = new DAGJoinAlgorithms();
+//
+//                /****simple join algorithm*********************************************************************************/
+//                int bitcount = (int)Math.floor(Math.log(i*10000)/Math.log(2));
+//                System.out.print("*"+bitcount);
+//                startTime = System.nanoTime();
+//                sja.SHJ(R1, S1, sig_len / Integer.SIZE, bitcount);
+//                estimatedTime = System.nanoTime() - startTime;
+//                System.out.print(estimatedTime/(1000000.0));
+//                System.out.print("ms\n");
+//
+//                R.clear();R1.clear();
+//                S.clear();S1.clear();
+//
+//            }catch (Exception e) {
+//                System.out.print(e);
+//            }
+//        }
 
         try{
             ArrayList<SimpleTuple> R = Generator.generateRandomRelation(relationSizeBase, maxSetSize, maxSetPool, SimpleTuple.class);
@@ -153,8 +153,8 @@ public class MakeTests {
             DAGJoinAlgorithms dja = new DAGJoinAlgorithms();
             AdvancedJoinAlgorithms aja = new AdvancedJoinAlgorithms();
 
-//
-//
+
+
 //            /****simple join algorithm*********************************************************************************/
 //            startTime = System.nanoTime();
 //            sja.NLNormalJoin(R,S);
@@ -162,22 +162,28 @@ public class MakeTests {
 //            System.out.print(estimatedTime/(1000000.0));
 //            System.out.print("ms\n");
 
-//            /****ASHJ_trie join algorithm******************************************************************************/
-//            {
-//            ArrayList<SigSimpleTuple> R7 = Generator.toSigSimpleTuples(R);
-//            ArrayList<SigSimpleTuple> S7 = Generator.toSigSimpleTuples(S);
-//
-//            int bitmask = (int)Math.floor(Math.log(relationSizeBase)/Math.log(2));
-//            //for(int bitmask = 10; bitmask < 32; bitmask++){
-//            startTime = System.nanoTime();
-//            aja.ASHJ_Trie(R7,S7,sig_len/Integer.SIZE,bitmask);
-//            estimatedTime = System.nanoTime() - startTime;
-//            System.out.print(estimatedTime/(1000000.0));
-//            System.out.print("ms\n");
-//            //}
-//
-//            R7.clear();S7.clear();
-//            }
+            /****ASHJ_trie join algorithm******************************************************************************/
+            {
+            ArrayList<SigSimpleTuple> R7 = Generator.toSigSimpleTuples(R);
+            ArrayList<SigSimpleTuple> S7 = Generator.toSigSimpleTuples(S);
+
+            int bitmask = (int)Math.floor(Math.log(relationSizeBase)/Math.log(2));
+            //for(int bitmask = 10; bitmask < 32; bitmask++){
+            startTime = System.nanoTime();
+            //aja.ASHJ_Trie(R7,S7,sig_len/Integer.SIZE,bitmask);
+            aja.ASHJ_Patricia(R7,S7,sig_len/Integer.SIZE);
+                estimatedTime = System.nanoTime() - startTime;
+            System.out.print(estimatedTime/(1000000.0));
+            System.out.print("ms\n");
+            //}
+
+            startTime = System.nanoTime();
+                sja.SHJ(R7,S7,sig_len/Integer.SIZE,bitmask);
+                estimatedTime = System.nanoTime() - startTime;
+                System.out.print(estimatedTime/(1000000.0)+"ms");
+
+            R7.clear();S7.clear();
+            }
 
 //            /****simple join algorithm with int array as long_signature*****************************************************/
 //            ArrayList<SigSimpleTuple> R1 = Generator.toSigSimpleTuples(R);

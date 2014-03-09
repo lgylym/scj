@@ -73,4 +73,52 @@ public class AdvancedJoinAlgorithms {
 
     }
 
+
+    public void ASHJ_Patricia(ArrayList<SigSimpleTuple> R, ArrayList<SigSimpleTuple> S, int sigLen) {
+        PatriciaTrie pt = new PatriciaTrie();
+        for(SigSimpleTuple s:S) {
+            s.signature = Utils.create_sig_normal(s.setValues, sigLen);//sigLen is 4
+            pt.put(s);
+        }
+
+        LinkedList<PatriciaTrie.PatriciaTrieNode> queue = new LinkedList<PatriciaTrie.PatriciaTrieNode>();
+        int count = 0;
+
+        for(SigSimpleTuple r:R) {
+            r.signature = Utils.create_sig_normal(r.setValues, sigLen);
+            queue.clear();
+            queue.add(pt.root);
+            while (!queue.isEmpty()) {
+                PatriciaTrie.PatriciaTrieNode node = queue.poll();
+                //compare prefix
+                if(PatriciaTrie.containCompare(r.signature, node.prefix, node.start, node.split-1) == true) {
+                    if(node.split >= sigLen * Integer.SIZE) {//reach the end, compare
+                        for(SigSimpleTuple s:node.items) {
+                            if((r.setSize >= s.setSize) && (Utils.compare_set(r.setValues, s.setValues) >= 0)) {
+                                count ++;
+                            }
+                        }
+                    }else {//need to compare more
+                        //get the split point of signature
+                        int bit = r.signature[node.split/Integer.SIZE] & (Integer.MIN_VALUE >>> (node.split%Integer.SIZE));
+                        //if(node.left == null || node.right == null) {
+                        //    System.out.print("fishy");
+                        //}
+                        if(bit == 0) {
+                            queue.add(node.left);
+                        }else {
+                            queue.add(node.left);
+                            queue.add(node.right);
+                        }
+                    }
+                }
+
+            }
+
+
+        }
+        System.out.println("ASHJ_Patricia will return "+Integer.toString(count)+" results");
+        //pt.print(pt.root);
+    }
+
 }

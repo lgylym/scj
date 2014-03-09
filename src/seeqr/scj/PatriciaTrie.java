@@ -50,6 +50,7 @@ public class PatriciaTrie {
         for(int i = 0; i < prefix_len; i++) {
             root.prefix[i] = 0;
         }
+        root.items = new ArrayList<SigSimpleTuple>();
 
         lmasks[0] = -1;
         rmasks[Integer.SIZE-1] = -1;
@@ -114,7 +115,7 @@ public class PatriciaTrie {
                 node.items.add(tuple);
             }else {//keep inserting
                 //get the bit at the split point
-                int bit = tuple.signature[node.split/Integer.SIZE] & (1<<(node.split%Integer.SIZE));
+                int bit = tuple.signature[node.split/Integer.SIZE] & (Integer.MIN_VALUE >>> (node.split%Integer.SIZE));
                 if(bit == 0) {//left branch
                     node.left = insert(node.left,tuple,node.split);
                 }else {//right branch
@@ -135,7 +136,9 @@ public class PatriciaTrie {
             node1.start = start;
             node1.split = index;
 
-            int bit = tuple.signature[index/Integer.SIZE] & (1 << (index%Integer.SIZE));
+            int bit = tuple.signature[index/Integer.SIZE] & (Integer.MIN_VALUE >>>  (index%Integer.SIZE));
+            //System.out.print(Integer.toBinaryString((Integer.MIN_VALUE >>>  (index%Integer.SIZE))));
+
             if(bit == 0) {//tuple on the left
                 node1.left = node2;
                 node1.right = node;
@@ -149,7 +152,7 @@ public class PatriciaTrie {
 
 
     /**
-     * compare array1 and array2 from start to end (inclusive)
+     * compare array1 and array2 from start to end (both inclusive)
      * return -1 if the two are the same
      * return some positive number (index) if the prefix break at some point
      * @param array1
@@ -157,8 +160,12 @@ public class PatriciaTrie {
      * @return
      */
     public static int equalCompare(int[] array1, int[] array2, int start, int end) {
+        if(start > end) {//comparing two empty strings
+            return -1;
+        }
+
         int starti = start / Integer.SIZE; //i is the index of the array
-        int startj = start % Integer.SIZE; //j is the index in a number
+        int startj = start % Integer.SIZE; //j is the index in an element
         int endi = end / Integer.SIZE;
         int endj = end % Integer.SIZE;
 
@@ -205,21 +212,71 @@ public class PatriciaTrie {
         return -1;
     }
 
+    /**
+     * check weather array1 contains array2 in the certain range [start,end] (inclusive)
+     * return false if there is no containment, return true if there is containment
+     * @param array1
+     * @param array2
+     * @param start
+     * @param end
+     * @return
+     */
+    public static boolean containCompare(int[] array1, int[] array2, int start, int end) {
+        if(start > end) {//two empty strings
+            return true;
+        }
+        int starti = start / Integer.SIZE; //i is the index of the array
+        int startj = start % Integer.SIZE; //j is the index in an element
+        int endi = end / Integer.SIZE;
+        int endj = end % Integer.SIZE;
+
+        if(starti < endi) {
+            //starti
+            int mask = lmasks[startj];
+            if((~(array1[starti]&mask) & (array2[starti]&mask)) != 0) {
+                return false;
+            }
+            //starti+1 to endi-1
+            for(int i = starti+1; i < endi-1; i++) {
+                if((~array1[i] & array2[i]) != 0) {
+                    return false;
+                }
+            }
+            //endi
+            mask = rmasks[endj];
+            if((~(array1[endi]&mask) & (array2[endi]&mask)) != 0) {
+                return false;
+            }
+            return true;
+
+        }else if(starti == endi) {
+            int mask = lmasks[startj] & rmasks[endj];
+            if((~(array1[starti]&mask) & (array2[starti]&mask)) != 0) {
+                return false;
+            }else {
+                return true;
+            }
+        }else {
+            System.out.print("Something is wrong in containCompare");
+            return false;
+        }
+    }
+
 
     public static void main(String[] args) {
         PatriciaTrie pt = new PatriciaTrie();
         int[] array1 = {0x11,0x21,0,0};
-        int[] array2 = {0x10,0x21,0,0};
-        SigSimpleTuple sst1 = new SigSimpleTuple();
-        sst1.signature = array1;
-        pt.put(sst1);
-        pt.print(pt.root);System.out.print('\n');
-        SigSimpleTuple sst2 = new SigSimpleTuple();
-        sst2.signature = array2;
-        pt.put(sst2);
-        pt.print(pt.root);
+        int[] array2 = {0xf10,0x21,0,0};
+//        SigSimpleTuple sst1 = new SigSimpleTuple();
+//        sst1.signature = array1;
+//        pt.put(sst1);
+//        pt.print(pt.root);System.out.print('\n');
+//        SigSimpleTuple sst2 = new SigSimpleTuple();
+//        sst2.signature = array2;
+//        pt.put(sst2);
+//        pt.print(pt.root);
 
-        //System.out.println(equalCompare(array1,array2,0,127));
+        System.out.println(containCompare(array1,array2,24,31));
 
     }
 }

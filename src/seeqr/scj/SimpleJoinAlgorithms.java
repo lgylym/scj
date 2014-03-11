@@ -8,6 +8,7 @@ import com.google.common.collect.Table;
 import com.googlecode.javaewah.EWAHCompressedBitmap;
 
 import com.googlecode.javaewah.IntIterator;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import sun.java2d.pipe.SpanShapeRenderer;
 

@@ -1,6 +1,9 @@
 package seeqr.scj;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * This class run through the tests
@@ -11,7 +14,7 @@ public class MakeTests {
     public static long[] sig_compare_time = {0,0,0,0};//call time measure
     public static long[] sig_compare_call = {0,0,0,0};//call count
     public static long set_compare = 0;//call time measure
-    public final static int relationSizeBase = 60000;
+    public final static int relationSizeBase = 50000;
 
     public static void reset_counters() {
         for(int i = 0; i < 4; i++) {
@@ -169,18 +172,50 @@ public class MakeTests {
 
             int bitmask = (int)Math.floor(Math.log(relationSizeBase)/Math.log(2));
             //for(int bitmask = 10; bitmask < 32; bitmask++){
-            startTime = System.nanoTime();
-            //aja.ASHJ_Trie(R7,S7,sig_len/Integer.SIZE,bitmask);
-            aja.ASHJ_Patricia(R7,S7,sig_len/Integer.SIZE);
-                estimatedTime = System.nanoTime() - startTime;
-            System.out.print(estimatedTime/(1000000.0));
-            System.out.print("ms\n");
             //}
-
-            startTime = System.nanoTime();
-                sja.SHJ(R7,S7,sig_len/Integer.SIZE,bitmask);
+//            Thread.sleep(5000);//5 second
+                startTime = System.nanoTime();
+                sja.SHJ(R7,S7,8,bitmask);//sig_len/Integer.SIZE
                 estimatedTime = System.nanoTime() - startTime;
-                System.out.print(estimatedTime/(1000000.0)+"ms");
+                System.out.print(estimatedTime/(1000000.0)+"ms\n");
+
+//                for(int sigLen = 100; sigLen < 101; sigLen = sigLen + 4) {
+//                    startTime = System.nanoTime();
+//                    //aja.ASHJ_Trie(R7,S7,sig_len/Integer.SIZE,bitmask);
+//                    aja.ASHJ_Patricia(R7,S7,sigLen);
+//                    estimatedTime = System.nanoTime() - startTime;
+//                    System.out.print(sigLen + ","+estimatedTime/(1000000.0)+"ms\n");
+//            }
+
+//                aja.pt = new PatriciaTrie(3);
+//                ArrayList<SigSimpleTuple> S8 = new ArrayList<SigSimpleTuple>();
+//                for(SigSimpleTuple s:S7) {
+//                    s.signature = Utils.create_sig_normal(s.setValues,3);
+//                    aja.pt.put(s);
+//                    PatriciaTrie.PatriciaTrieNode node = aja.pt.search(aja.pt.root, s.signature, 0);
+//                    if(node == null) {
+//                        //System.out.print(s);
+//                        System.out.println(node);
+//                        S8.add(s);
+//                    }
+//                }
+
+//                for(SigSimpleTuple s:S8) {
+//                    s.signature = Utils.create_sig_normal(s.setValues,3);
+//                    aja.pt.put(s);
+//                    PatriciaTrie.PatriciaTrieNode node = aja.pt.search(aja.pt.root, s.signature, 0);
+//                    if(node == null) {
+//                        System.out.print(s);
+//                        System.out.println(node);
+//                        S8.add(s);
+//                    }
+//                }
+
+//                result2.removeAll(result1);
+//                for(Pair<SigSimpleTuple,SigSimpleTuple> p : result2) {
+//                    PatriciaTrie.PatriciaTrieNode node = aja.pt.search(aja.pt.root, p.getRight().signature, 0);
+//                    System.out.println(node);
+//                }
 
             R7.clear();S7.clear();
             }

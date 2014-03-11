@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
 /**
  * Created by yluo on 2/19/14.
  */
@@ -75,9 +78,9 @@ public class AdvancedJoinAlgorithms {
 
 
     public void ASHJ_Patricia(ArrayList<SigSimpleTuple> R, ArrayList<SigSimpleTuple> S, int sigLen) {
-        PatriciaTrie pt = new PatriciaTrie();
+        PatriciaTrie pt = new PatriciaTrie(sigLen);
         for(SigSimpleTuple s:S) {
-            s.signature = Utils.create_sig_normal(s.setValues, sigLen);//sigLen is 4
+            s.signature = Utils.create_sig_normal(s.setValues, sigLen);//sigLen is 4 by default
             pt.put(s);
         }
 
@@ -119,6 +122,28 @@ public class AdvancedJoinAlgorithms {
         }
         System.out.println("ASHJ_Patricia will return "+Integer.toString(count)+" results");
         //pt.print(pt.root);
+    }
+
+
+    public static void main(String[] args) {
+        AdvancedJoinAlgorithms aja = new AdvancedJoinAlgorithms();
+        ArrayList<SigSimpleTuple> R = new ArrayList<SigSimpleTuple>();
+        SigSimpleTuple r1 = new SigSimpleTuple();
+        r1.tupleID = 1;
+        int[] array = {425};
+        r1.setValues = array;
+        r1.setSize = r1.setValues.length;
+
+        SigSimpleTuple r2 = new SigSimpleTuple();
+        r2.tupleID = 2;
+        int[] array2 = {425};
+        r2.setValues = array2;
+        r2.setSize = r2.setValues.length;
+
+        //r.signature = Utils.create_sig_normal(r.setValues,1);
+        R.add(r1);
+        R.add(r2);
+        aja.ASHJ_Patricia(R,R,1);
     }
 
 }

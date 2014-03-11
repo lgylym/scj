@@ -15,15 +15,22 @@ public class SigSimpleTuple extends SimpleTuple {
         sb.append(setSize);
         sb.append(",long_signature:");
 
-        sb.append(BitOperations.toStringBitStream(signature));
+        if(signature != null){
+            sb.append(BitOperations.toStringBitStream(signature));
+        }
+        if(setValues != null){
+            sb.append("\nset value:");
 
-        sb.append("\nset value:");
-
-        for(int value:setValues) {
-            sb.append(value);
-            sb.append(',');
+            for(int value:setValues) {
+                sb.append(value);
+                sb.append(',');
+            }
         }
         sb.append('\n');
         return sb.toString();
+    }
+
+    public int hashCode() {
+        return tupleID;
     }
 }

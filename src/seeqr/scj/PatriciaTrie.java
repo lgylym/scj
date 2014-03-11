@@ -1,7 +1,6 @@
 package seeqr.scj;
 
 import java.util.ArrayList;
-import java.util.BitSet;
 
 /**
  * Created by yluo on 3/7/14.
@@ -12,7 +11,7 @@ public class PatriciaTrie {
 
 
 
-    private final int prefix_len = 4;
+    private int prefixLen = 4;//should be the same as the signature size, 4 by default
 
     protected PatriciaTrieNode root;
 
@@ -41,22 +40,24 @@ public class PatriciaTrie {
     }
 
 
-    public PatriciaTrie() {
+    public PatriciaTrie(int sigLen) {
+        prefixLen = sigLen;
+
         //initially, we store an empty item in the trie, in the root
+
         root = new PatriciaTrieNode();
         root.start = 0;
-        root.split = prefix_len * Integer.SIZE; //out of the array does we split
-        root.prefix = new int[prefix_len];
-        for(int i = 0; i < prefix_len; i++) {
+        root.split = prefixLen * Integer.SIZE; //out of the array do we split, means the leaf node
+        root.prefix = new int[prefixLen];
+        for(int i = 0; i < prefixLen; i++) {
             root.prefix[i] = 0;
         }
         root.items = new ArrayList<SigSimpleTuple>();
 
-        lmasks[0] = -1;
-        rmasks[Integer.SIZE-1] = -1;
+        lmasks[0] = -1;//1111...1111
+        rmasks[Integer.SIZE-1] = -1;//1111...1111
         for(int i = 1; i < lmasks.length; i++) {
             lmasks[i] = lmasks[i-1]>>>1;
-
         }
 
         for(int i = rmasks.length-2; i >= 0; i--) {
@@ -86,8 +87,12 @@ public class PatriciaTrie {
 
     public void print(PatriciaTrieNode node) {
         System.out.print(node);
-        if(node.left != null) print(node.left);
-        if(node.right != null) print(node.right);
+        if(node.left != null) {
+            print(node.left);
+        }
+        if(node.right != null) {
+            print(node.right);
+        }
     }
 
     //put a tuple into the trie, call insert
@@ -107,7 +112,7 @@ public class PatriciaTrie {
         //get the prefixes
         int index = equalCompare(node.prefix,tuple.signature,start,node.split-1);
         if(index == -1) {//equal
-            if(node.split > 127) {//out of boundary
+            if(node.split >= Integer.SIZE * prefixLen) {//out of boundary
                 //directly insert
                 if(node.items == null) {
                     node.items = new ArrayList<SigSimpleTuple>();
@@ -124,32 +129,58 @@ public class PatriciaTrie {
             }
             return node;
         }else {//should split at index
-            PatriciaTrieNode node1 = new PatriciaTrieNode(node.prefix);
-            PatriciaTrieNode node2 = new PatriciaTrieNode(tuple.signature);
-            node2.items = new ArrayList<SigSimpleTuple>();
-            node2.items.add(tuple);
-            node2.split = prefix_len * Integer.SIZE;
-            node2.start = index;
+            //
+            PatriciaTrieNode newParent = new PatriciaTrieNode(node.prefix);
+            PatriciaTrieNode newChild = new PatriciaTrieNode(tuple.signature);
+            newChild.items = new ArrayList<SigSimpleTuple>();
+            newChild.items.add(tuple);
+            newChild.split = prefixLen * Integer.SIZE;
+            newChild.start = index;
 
             node.start = index;
 
-            node1.start = start;
-            node1.split = index;
+            newParent.start = start;
+            newParent.split = index;
 
             int bit = tuple.signature[index/Integer.SIZE] & (Integer.MIN_VALUE >>>  (index%Integer.SIZE));
             //System.out.print(Integer.toBinaryString((Integer.MIN_VALUE >>>  (index%Integer.SIZE))));
 
             if(bit == 0) {//tuple on the left
-                node1.left = node2;
-                node1.right = node;
+                newParent.left = newChild;
+                newParent.right = node;
             }else {
-                node1.left = node;
-                node1.right = node2;
+                newParent.left = node;
+                newParent.right = newChild;
             }
-            return node1;
+            return newParent;
         }
     }
 
+
+    /**
+     * search for some signature in the trie. return the leaf node if possible
+     * @param node
+     * @param signature
+     * @param start
+     * @return
+     */
+    public PatriciaTrieNode search(PatriciaTrieNode node, int[] signature, int start) {
+        int index = equalCompare(node.prefix,signature,start,node.split-1);
+        if(index == -1) {
+            if(node.split >= Integer.SIZE * prefixLen) {//out of boundary
+                return node;
+            }else {//keep inserting
+                //get the bit at the split point
+                int bit = signature[node.split/Integer.SIZE] & (Integer.MIN_VALUE >>> (node.split%Integer.SIZE));
+                if(bit == 0) {//left branch
+                    return search(node.left,signature,node.split);
+                }else {//right branch
+                    return search(node.right,signature,node.split);
+                }
+            }
+        }
+        return null;
+    }
 
     /**
      * compare array1 and array2 from start to end (both inclusive)
@@ -160,7 +191,7 @@ public class PatriciaTrie {
      * @return
      */
     public static int equalCompare(int[] array1, int[] array2, int start, int end) {
-        if(start > end) {//comparing two empty strings
+        if(start > end) {//compare two empty strings
             return -1;
         }
 
@@ -175,36 +206,31 @@ public class PatriciaTrie {
         if(starti < endi) {
             //starti
             int mask = lmasks[startj];
-            int result =(array1[starti] & mask) ^ (array2[starti]&mask);
-            int index = Integer.numberOfLeadingZeros(result);
-            if(index != Integer.SIZE) {
-                return starti*Integer.SIZE + index;
+            int result =(array1[starti] & mask) ^ (array2[starti] & mask);
+            if(result != 0) {
+                return starti*Integer.SIZE + Integer.numberOfLeadingZeros(result);
             }
             //starti+1 to endi-1
-            for(int i = starti + 1; i < endi - 1; i++) {
+            for(int i = starti + 1; i <= endi - 1; i++) {
                 result = array1[i] ^ array2[i];
-                index = Integer.numberOfLeadingZeros(result);
-                if(index != Integer.SIZE) {
-                    return i*Integer.SIZE + index;
+                if(result != 0) {
+                    return i*Integer.SIZE + Integer.numberOfLeadingZeros(result);
                 }
             }
             //endi
             mask = rmasks[endj];
-            result = (array1[endi] & mask) ^ (array2[endi]&mask);
-            index = Integer.numberOfLeadingZeros(result);
-            if(index != Integer.SIZE) {
-                return endi*Integer.SIZE + index;
+            result = (array1[endi] & mask) ^ (array2[endi] & mask);
+            if(result != 0) {
+                return endi*Integer.SIZE + Integer.numberOfLeadingZeros(result);
             }
         }else if(starti == endi) {
             //create masks
             int mask = lmasks[startj] & rmasks[endj];
             int result = (array1[starti] & mask) ^ (array2[starti]&mask);
-            //System.out.print(result);
-            int index = Integer.numberOfLeadingZeros(result);
-            if(index != Integer.SIZE) {
-                return starti*Integer.SIZE + index;
-            }else {
+            if(result == 0) {
                 return -1;
+            }else {
+                return starti*Integer.SIZE + Integer.numberOfLeadingZeros(result);
             }
         }else {
             System.out.print("Something is wrong in equalCompare");
@@ -264,19 +290,20 @@ public class PatriciaTrie {
 
 
     public static void main(String[] args) {
-        PatriciaTrie pt = new PatriciaTrie();
+        PatriciaTrie pt = new PatriciaTrie(4);
         int[] array1 = {0x11,0x21,0,0};
-        int[] array2 = {0xf10,0x21,0,0};
-//        SigSimpleTuple sst1 = new SigSimpleTuple();
-//        sst1.signature = array1;
-//        pt.put(sst1);
-//        pt.print(pt.root);System.out.print('\n');
-//        SigSimpleTuple sst2 = new SigSimpleTuple();
-//        sst2.signature = array2;
-//        pt.put(sst2);
-//        pt.print(pt.root);
+        int[] array2 = {0x11,0x21,0,0};
+        SigSimpleTuple sst1 = new SigSimpleTuple();
+        sst1.signature = array1;
+        pt.put(sst1);
+        pt.print(pt.root);System.out.print('\n');
+        SigSimpleTuple sst2 = new SigSimpleTuple();
+        sst2.signature = array2;
+        pt.put(sst2);
+        pt.print(pt.root);
 
-        System.out.println(containCompare(array1,array2,24,31));
+        System.out.print("\n"+pt.search(pt.root,array1,0).items);
+        //System.out.println(containCompare(array1,array2,24,31));
 
     }
 }

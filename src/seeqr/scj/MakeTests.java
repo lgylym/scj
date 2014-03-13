@@ -14,7 +14,7 @@ public class MakeTests {
     public static long[] sig_compare_time = {0,0,0,0};//call time measure
     public static long[] sig_compare_call = {0,0,0,0};//call count
     public static long set_compare = 0;//call time measure
-    public final static int relationSizeBase = 50000;
+    public final static int relationSizeBase = 40000;
 
     public static void reset_counters() {
         for(int i = 0; i < 4; i++) {
@@ -59,7 +59,7 @@ public class MakeTests {
         long startTime;
         long estimatedTime;
         //int relationSizeBase = 30000;
-        int maxSetSize = 1<<7;//128
+        int maxSetSize = 1<<6;//128
         int maxSetPool = 1<<10;//Integer.MAX_VALUE;//1<<8;////1024
         int sig_len = 32<<2; //better to be a multiplier of Integer.SIZE (32),128
         //take input, store them in R and S
@@ -175,17 +175,24 @@ public class MakeTests {
             //}
 //            Thread.sleep(5000);//5 second
                 startTime = System.nanoTime();
-                sja.SHJ(R7,S7,8,bitmask);//sig_len/Integer.SIZE
+                sja.SHJ(R7,S7,sig_len/Integer.SIZE,bitmask);//
                 estimatedTime = System.nanoTime() - startTime;
                 System.out.print(estimatedTime/(1000000.0)+"ms\n");
 
-//                for(int sigLen = 100; sigLen < 101; sigLen = sigLen + 4) {
-//                    startTime = System.nanoTime();
-//                    //aja.ASHJ_Trie(R7,S7,sig_len/Integer.SIZE,bitmask);
-//                    aja.ASHJ_Patricia(R7,S7,sigLen);
-//                    estimatedTime = System.nanoTime() - startTime;
-//                    System.out.print(sigLen + ","+estimatedTime/(1000000.0)+"ms\n");
-//            }
+                startTime = System.nanoTime();
+                aja.PETTI_Join(R,S);
+                estimatedTime = System.nanoTime() - startTime;
+                System.out.println(estimatedTime/(1000000.0)+"ms");
+
+
+                for(int sigLen = 100; sigLen < 101; sigLen = sigLen + 4) {
+                    startTime = System.nanoTime();
+                    //aja.ASHJ_Trie(R7,S7,sig_len/Integer.SIZE,bitmask);
+                    aja.ASHJ_Patricia(R7,S7,sigLen);
+                    //aja.PETTI_Join(R,S);
+                    estimatedTime = System.nanoTime() - startTime;
+                    System.out.print(sigLen + ","+estimatedTime/(1000000.0)+"ms\n");
+            }
 
 //                aja.pt = new PatriciaTrie(3);
 //                ArrayList<SigSimpleTuple> S8 = new ArrayList<SigSimpleTuple>();

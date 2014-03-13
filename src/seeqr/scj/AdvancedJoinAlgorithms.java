@@ -1,9 +1,6 @@
 package seeqr.scj;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -84,7 +81,9 @@ public class AdvancedJoinAlgorithms {
             pt.put(s);
         }
 
-        LinkedList<PatriciaTrie.PatriciaTrieNode> queue = new LinkedList<PatriciaTrie.PatriciaTrieNode>();
+        //array deque is likely to be faster than linked list implementation
+        //LinkedList<PatriciaTrie.PatriciaTrieNode> queue = new LinkedList<PatriciaTrie.PatriciaTrieNode>();
+        ArrayDeque<PatriciaTrie.PatriciaTrieNode> queue = new ArrayDeque<PatriciaTrie.PatriciaTrieNode>(S.size());
         int count = 0;
 
         for(SigSimpleTuple r:R) {
@@ -124,6 +123,81 @@ public class AdvancedJoinAlgorithms {
         //pt.print(pt.root);
     }
 
+
+    public void PETTI_Join(ArrayList<SimpleTuple> R, ArrayList<SimpleTuple> S) {
+        //put tuples from S to the prefix tree
+        PETTI pt = new PETTI();
+        for(SimpleTuple st:S) {
+            pt.put(st);
+        }
+        //put tuples from R to inverted index
+        HashMap<Integer,ArrayList<Integer>> invertedList = new HashMap<Integer, ArrayList<Integer>>();
+        for(SimpleTuple r:R) {
+            for(int element:r.setValues) {
+                if(!invertedList.containsKey(element)) {
+                    ArrayList<Integer> l = new ArrayList<Integer>();
+                    l.add(r.tupleID);
+                    invertedList.put(element,l);
+                }else {
+                    invertedList.get(element).add(r.tupleID);
+                }
+            }
+        }
+        int count = 0;
+        for(PETTI.Node child:pt.root.map.values()) {
+            count += join(child,null,invertedList);
+        }
+        System.out.println("PETTI_Join will return "+count+" results");
+    }
+
+    private int join(PETTI.Node node, ArrayList upList, HashMap<Integer,ArrayList<Integer>> invertedList) {
+        int levelCount = 0;
+        ArrayList<Integer> currList;
+        if(upList == null) {
+            currList = invertedList.get(node.setItem);
+        }else {
+            //a join of uplist and cuurList
+            //currList = new ArrayList<Integer>(upList);
+            //currList.retainAll(invertedList.get(node.setItem));
+            currList = intersect(upList, invertedList.get(node.setItem));
+        }
+        if(node.tupleList != null) {
+            for(Integer t:node.tupleList) {
+                for(int j:currList){
+                    levelCount ++;
+                }
+            }
+        }
+
+        for(PETTI.Node child:node.map.values()) {
+            levelCount += join(child, currList,invertedList);
+        }
+        return levelCount;
+    }
+
+    //l1 join l2 -> l1, both are sorted
+    private ArrayList<Integer> intersect(ArrayList<Integer> l1, ArrayList<Integer> l2) {
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        int i = 0; int j = 0;
+        int size1 = l1.size(); int size2 = l2.size();
+
+
+        while(i < size1 && j < size2) {
+            int e1 = l1.get(i);
+            int e2 = l2.get(j);
+            if(e1 < e2) {
+                i++;
+            }else if(e1 > e2) {
+                j++;
+            }else {//equal
+                result.add(e1);
+                i++;
+                j++;
+            }
+        }
+
+        return result;
+    }
 
     public static void main(String[] args) {
         AdvancedJoinAlgorithms aja = new AdvancedJoinAlgorithms();

@@ -21,7 +21,7 @@ public class SimpleJoinAlgorithms {
      * @param R
      * @param S
      */
-    public void NLNormalJoin(ArrayList<SimpleTuple> R, ArrayList<SimpleTuple> S) {
+    public static void NLNormalJoin(ArrayList<SimpleTuple> R, ArrayList<SimpleTuple> S) {
         int count = 0;
         for(SimpleTuple r:R) {
             for(SimpleTuple s : S) {

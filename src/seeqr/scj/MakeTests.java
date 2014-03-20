@@ -14,7 +14,7 @@ public class MakeTests {
     public static long[] sig_compare_time = {0,0,0,0};//call time measure
     public static long[] sig_compare_call = {0,0,0,0};//call count
     public static long set_compare = 0;//call time measure
-    public final static int relationSizeBase = 40000;
+    public final static int relationSizeBase = 10000;
 
     public static void reset_counters() {
         for(int i = 0; i < 4; i++) {
@@ -59,7 +59,7 @@ public class MakeTests {
         long startTime;
         long estimatedTime;
         //int relationSizeBase = 30000;
-        int maxSetSize = 1<<6;//128
+        int maxSetSize = 80;//1<<7;//128
         int maxSetPool = 1<<10;//Integer.MAX_VALUE;//1<<8;////1024
         int sig_len = 32<<2; //better to be a multiplier of Integer.SIZE (32),128
         //take input, store them in R and S
@@ -120,33 +120,58 @@ public class MakeTests {
 
 
         //SHJ test
-//        for(int i = 8; i < 11; i++) {
+        for(int i = 5; i <= 5; i++) {
+
+            try{
+                Generator.rng.setSeed(0);
+                ArrayList<SimpleTuple> R = Generator.generateRandomRelation(i*relationSizeBase, maxSetSize, maxSetPool, SimpleTuple.class);
+                ArrayList<SimpleTuple> S = Generator.generateRandomRelation(i*relationSizeBase, maxSetSize, maxSetPool, SimpleTuple.class);
+
+                ArrayList<SigSimpleTuple> R1 = Generator.toSigSimpleTuples(R);
+                ArrayList<SigSimpleTuple> S1 = Generator.toSigSimpleTuples(S);
+                for(int j = (int)Math.ceil(Math.log(2*i*10000)/Math.log(2))-10; j < 25; j++){
+                //SimpleJoinAlgorithms sja = new SimpleJoinAlgorithms();
+                AdvancedJoinAlgorithms aja = new AdvancedJoinAlgorithms();
+                //DAGJoinAlgorithms dja = new DAGJoinAlgorithms();
+                //int j = 18;
+                /****simple join algorithm*********************************************************************************/
+                System.out.print(j+",");
+                int bitcount = (int)Math.floor(Math.log(i*10000)/Math.log(2));
+                System.out.print("*"+bitcount);
+                startTime = System.nanoTime();
+                aja.ASHJ_Patricia(R1,S1,j);
+                //sja.SHJ(R1, S1, sig_len / Integer.SIZE, bitcount);
+                estimatedTime = System.nanoTime() - startTime;
+                System.out.print(estimatedTime/(1000000.0));
+                System.out.print("ms\n");
+                }
+                R.clear();R1.clear();
+                S.clear();S1.clear();
+
+            }catch (Exception e) {
+                System.out.print(e);
+            }
+
+        }
+
+//        /**test on PRETTI**/
+//        for(int i = 9; i <= 10; i++) {
 //            try{
 //                ArrayList<SimpleTuple> R = Generator.generateRandomRelation(i*relationSizeBase, maxSetSize, maxSetPool, SimpleTuple.class);
 //                ArrayList<SimpleTuple> S = Generator.generateRandomRelation(i*relationSizeBase, maxSetSize, maxSetPool, SimpleTuple.class);
 //
-//                ArrayList<SigSimpleTuple> R1 = Generator.toSigSimpleTuples(R);
-//                ArrayList<SigSimpleTuple> S1 = Generator.toSigSimpleTuples(S);
 //
-//                SimpleJoinAlgorithms sja = new SimpleJoinAlgorithms();
-//                //DAGJoinAlgorithms dja = new DAGJoinAlgorithms();
-//
-//                /****simple join algorithm*********************************************************************************/
-//                int bitcount = (int)Math.floor(Math.log(i*10000)/Math.log(2));
-//                System.out.print("*"+bitcount);
+//                AdvancedJoinAlgorithms aja = new AdvancedJoinAlgorithms();
 //                startTime = System.nanoTime();
-//                sja.SHJ(R1, S1, sig_len / Integer.SIZE, bitcount);
+//                aja.PETTI_Join(R,S);
 //                estimatedTime = System.nanoTime() - startTime;
-//                System.out.print(estimatedTime/(1000000.0));
-//                System.out.print("ms\n");
+//                System.out.println(estimatedTime/(1000000.0)+"ms");
 //
-//                R.clear();R1.clear();
-//                S.clear();S1.clear();
+//            }catch(Exception e) {
 //
-//            }catch (Exception e) {
-//                System.out.print(e);
 //            }
 //        }
+
 
         try{
             ArrayList<SimpleTuple> R = Generator.generateRandomRelation(relationSizeBase, maxSetSize, maxSetPool, SimpleTuple.class);
@@ -174,25 +199,25 @@ public class MakeTests {
             //for(int bitmask = 10; bitmask < 32; bitmask++){
             //}
 //            Thread.sleep(5000);//5 second
-                startTime = System.nanoTime();
-                sja.SHJ(R7,S7,sig_len/Integer.SIZE,bitmask);//
-                estimatedTime = System.nanoTime() - startTime;
-                System.out.print(estimatedTime/(1000000.0)+"ms\n");
+//                startTime = System.nanoTime();
+//                sja.SHJ(R7,S7,sig_len/Integer.SIZE,bitmask);//
+//                estimatedTime = System.nanoTime() - startTime;
+//                System.out.print(estimatedTime/(1000000.0)+"ms\n");
 
-                startTime = System.nanoTime();
-                aja.PETTI_Join(R,S);
-                estimatedTime = System.nanoTime() - startTime;
-                System.out.println(estimatedTime/(1000000.0)+"ms");
+//                startTime = System.nanoTime();
+//                aja.PETTI_Join(R,S);
+//                estimatedTime = System.nanoTime() - startTime;
+//                System.out.println(estimatedTime/(1000000.0)+"ms");
 
 
-                for(int sigLen = 100; sigLen < 101; sigLen = sigLen + 4) {
-                    startTime = System.nanoTime();
-                    //aja.ASHJ_Trie(R7,S7,sig_len/Integer.SIZE,bitmask);
-                    aja.ASHJ_Patricia(R7,S7,sigLen);
-                    //aja.PETTI_Join(R,S);
-                    estimatedTime = System.nanoTime() - startTime;
-                    System.out.print(sigLen + ","+estimatedTime/(1000000.0)+"ms\n");
-            }
+//                for(int sigLen = 100; sigLen < 101; sigLen = sigLen + 4) {
+//                    startTime = System.nanoTime();
+//                    //aja.ASHJ_Trie(R7,S7,sig_len/Integer.SIZE,bitmask);
+//                    aja.ASHJ_Patricia(R7,S7,sigLen);
+//                    //aja.PETTI_Join(R,S);
+//                    estimatedTime = System.nanoTime() - startTime;
+//                    System.out.print(sigLen + ","+estimatedTime/(1000000.0)+"ms\n");
+//            }
 
 //                aja.pt = new PatriciaTrie(3);
 //                ArrayList<SigSimpleTuple> S8 = new ArrayList<SigSimpleTuple>();

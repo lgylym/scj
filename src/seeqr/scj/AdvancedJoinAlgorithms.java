@@ -125,11 +125,31 @@ public class AdvancedJoinAlgorithms {
 
 
     public void PETTI_Join(ArrayList<SimpleTuple> R, ArrayList<SimpleTuple> S) {
+        /*
+        int[] hist = new int[1<<10];
+        for(int i = 0; i < hist.length; i++) {
+            hist[i] = 0;
+        }
+        for(SimpleTuple s:S) {
+            for(int element:s.setValues) {
+                hist[element] ++;
+            }
+        }
+        for(int i = 0; i < hist.length; i++) {
+            System.out.print(hist[i]+",");
+        }*/
+
+
+
         //put tuples from S to the prefix tree
         PETTI pt = new PETTI();
         for(SimpleTuple st:S) {
             pt.put(st);
         }
+        //sort tuples by tuple id in R
+        //so that in inverted index tuple ids are sorted as well
+        Collections.sort(R);
+
         //put tuples from R to inverted index
         HashMap<Integer,ArrayList<Integer>> invertedList = new HashMap<Integer, ArrayList<Integer>>();
         for(SimpleTuple r:R) {
@@ -143,6 +163,12 @@ public class AdvancedJoinAlgorithms {
                 }
             }
         }
+//        //sort every inverted index entry, this should not be necessary
+//        for(int i:invertedList.keySet()) {
+//            ArrayList<Integer> l = invertedList.get(i);
+//            Collections.sort(l);
+//        }
+
         int count = 0;
         for(PETTI.Node child:pt.root.map.values()) {
             count += join(child,null,invertedList);
@@ -179,12 +205,13 @@ public class AdvancedJoinAlgorithms {
     private ArrayList<Integer> intersect(ArrayList<Integer> l1, ArrayList<Integer> l2) {
         ArrayList<Integer> result = new ArrayList<Integer>();
         int i = 0; int j = 0;
+        int e1; int e2;
         int size1 = l1.size(); int size2 = l2.size();
 
 
         while(i < size1 && j < size2) {
-            int e1 = l1.get(i);
-            int e2 = l2.get(j);
+            e1 = l1.get(i);
+            e2 = l2.get(j);
             if(e1 < e2) {
                 i++;
             }else if(e1 > e2) {

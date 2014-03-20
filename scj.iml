@@ -9,11 +9,11 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="guava-15.0" level="project" />
     <orderEntry type="library" name="commons-math3-3.2" level="project" />
-    <orderEntry type="library" name="commons-math3-3.2 (2)" level="project" />
-    <orderEntry type="library" name="commons-math3-3.2" level="project" />
     <orderEntry type="library" name="JavaEWAH-0.8.0" level="project" />
     <orderEntry type="library" name="JavaEWAH-0.8.0-javadoc" level="project" />
     <orderEntry type="library" name="commons-lang3-3.3" level="project" />
+    <orderEntry type="library" name="jopt-simple-4.6" level="project" />
+    <orderEntry type="library" name="junit-4.11" level="project" />
   </component>
 </module>
 

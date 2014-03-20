@@ -7,6 +7,9 @@ import java.util.*;
  * Created by yluo on 12/20/13.
  */
 public class Generator {
+
+
+
     /**
      * Generate a random relation with everything random
      * A bit generic programming to handle different tuple classes
@@ -18,10 +21,16 @@ public class Generator {
 
     protected static int tupleCounter = 0;//same tuple id must corresponds to the same set
 
+    protected static Random rng = new Random(); // Ideally just create one instance globally
+
+    public static void setSeed(long seed) {
+        rng.setSeed(seed);
+    }
+
     public static<T extends SimpleTuple> ArrayList<T> generateRandomRelation(
             int relationSize, int setMaxSize, int setMaxRange, Class<T> cls) throws Exception {
         ArrayList<T> result = new ArrayList<T>(relationSize);
-        Random rng = new Random(); // Ideally just create one instance globally
+
         T tuple;
         int setSize;
 

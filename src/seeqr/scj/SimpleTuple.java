@@ -3,7 +3,7 @@ package seeqr.scj;
 /**
  * Created by yluo on 12/19/13.
  */
-public class SimpleTuple {
+public class SimpleTuple implements Comparable<SimpleTuple>{
     protected int tupleID;
     protected int setSize;
     protected int[] setValues;
@@ -30,5 +30,9 @@ public class SimpleTuple {
         }
         sb.append('\n');
         return sb.toString();
+    }
+
+    public int compareTo(SimpleTuple st) {
+        return this.tupleID - st.tupleID;
     }
  }

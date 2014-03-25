@@ -74,7 +74,7 @@ public class AdvancedJoinAlgorithms {
     }
 
 
-    public void ASHJ_Patricia(ArrayList<SigSimpleTuple> R, ArrayList<SigSimpleTuple> S, int sigLen) {
+    public static void ASHJ_Patricia(ArrayList<SigSimpleTuple> R, ArrayList<SigSimpleTuple> S, int sigLen) {
         PatriciaTrie pt = new PatriciaTrie(sigLen);
         for(SigSimpleTuple s:S) {
             s.signature = Utils.create_sig_normal(s.setValues, sigLen);//sigLen is 4 by default
@@ -119,12 +119,12 @@ public class AdvancedJoinAlgorithms {
 
 
         }
-        System.out.println("ASHJ_Patricia will return "+Integer.toString(count)+" results");
+        System.err.println("ASHJ_Patricia will return "+Integer.toString(count)+" results");
         //pt.print(pt.root);
     }
 
 
-    public void PETTI_Join(ArrayList<SimpleTuple> R, ArrayList<SimpleTuple> S) {
+    public static void PETTI_Join(ArrayList<SimpleTuple> R, ArrayList<SimpleTuple> S) {
         /*
         int[] hist = new int[1<<10];
         for(int i = 0; i < hist.length; i++) {
@@ -173,10 +173,10 @@ public class AdvancedJoinAlgorithms {
         for(PETTI.Node child:pt.root.map.values()) {
             count += join(child,null,invertedList);
         }
-        System.out.println("PETTI_Join will return "+count+" results");
+        System.err.println("PETTI_Join will return "+count+" results");
     }
 
-    private int join(PETTI.Node node, ArrayList upList, HashMap<Integer,ArrayList<Integer>> invertedList) {
+    private static int join(PETTI.Node node, ArrayList upList, HashMap<Integer,ArrayList<Integer>> invertedList) {
         int levelCount = 0;
         ArrayList<Integer> currList;
         if(upList == null) {
@@ -202,7 +202,7 @@ public class AdvancedJoinAlgorithms {
     }
 
     //l1 join l2 -> l1, both are sorted
-    private ArrayList<Integer> intersect(ArrayList<Integer> l1, ArrayList<Integer> l2) {
+    private static ArrayList<Integer> intersect(ArrayList<Integer> l1, ArrayList<Integer> l2) {
         ArrayList<Integer> result = new ArrayList<Integer>();
         int i = 0; int j = 0;
         int e1; int e2;

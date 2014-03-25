@@ -90,9 +90,19 @@ public class RelationGenerator {
         ArrayList<T> result = new ArrayList<T>(relationSize);
         T tuple;
         int setSize;
+
+        int step = relationSize/100;
+
+        //int j = 0;
+
         TreeSet<Integer> generated = new TreeSet<Integer>();
         try{
             for(int i = tupleIDStart; i < relationSize + tupleIDStart; i++) {
+
+                if(i % step == 0) {
+                    System.err.print("\r"+i/step + "%");
+                }
+
                 setSize = setcardGen.sample();
                 if(setcardDistribution == Distribution.Poisson) {
                     setSize ++;//make sure there is no zero set size
@@ -145,6 +155,11 @@ public class RelationGenerator {
      * @param args
      */
     public static void main(String[] args) {
+        if(args.length <= 1) {
+            printHelp();
+            return;
+        }
+
         OptionParser parser = new OptionParser("s::r:c:m:e:d:");
         OptionSet options = parser.parse(args);
         long seed = 0;
@@ -172,6 +187,18 @@ public class RelationGenerator {
             }
             System.out.print("\n");
         }
+    }
+
+    public static void printHelp() {
+        System.out.println("\nRelation generator usage:\n");
+        System.out.println("java -jar some.jar\n" +
+                "[-s=seed] the seed for random generator, default 0\n" +
+                "-r=relationSize number of tuples in the relation\n" +
+                "-c=setCardDistribution set cardinality distribution, {uniform, zipf, poisson}\n" +
+                "-m=setCardMax max value for set cardinality\n" +
+                "-e=elementDistribution overall distribution for set elements, {uniform, zipf, poisson}\n" +
+                "-d=elementMax set domain cardinality\n");
+        System.out.println("Example: java -jar some.jar -r=10000 -c=uniform -m=20 -e=uniform -d=100");
     }
 
     private static Distribution getDistribution(String description) {

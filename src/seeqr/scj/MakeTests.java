@@ -59,7 +59,7 @@ public class MakeTests {
         long startTime;
         long estimatedTime;
         //int relationSizeBase = 30000;
-        int maxSetSize = 80;//1<<7;//128
+        int maxSetSize = 100;//1<<7;//128
         int maxSetPool = 1<<10;//Integer.MAX_VALUE;//1<<8;////1024
         int sig_len = 32<<2; //better to be a multiplier of Integer.SIZE (32),128
         //take input, store them in R and S
@@ -120,7 +120,7 @@ public class MakeTests {
 
 
         //SHJ test
-        for(int i = 5; i <= 5; i++) {
+        for(int i = 100; i <= 100; i++) {
 
             try{
                 Generator.rng.setSeed(0);
@@ -129,22 +129,22 @@ public class MakeTests {
 
                 ArrayList<SigSimpleTuple> R1 = Generator.toSigSimpleTuples(R);
                 ArrayList<SigSimpleTuple> S1 = Generator.toSigSimpleTuples(S);
-                for(int j = (int)Math.ceil(Math.log(2*i*10000)/Math.log(2))-10; j < 25; j++){
-                //SimpleJoinAlgorithms sja = new SimpleJoinAlgorithms();
-                AdvancedJoinAlgorithms aja = new AdvancedJoinAlgorithms();
+                //for(int j = (int)Math.ceil(Math.log(2*i*10000)/Math.log(2))-10; j < 25; j++){
+                SimpleJoinAlgorithms sja = new SimpleJoinAlgorithms();
+                //AdvancedJoinAlgorithms aja = new AdvancedJoinAlgorithms();
                 //DAGJoinAlgorithms dja = new DAGJoinAlgorithms();
                 //int j = 18;
                 /****simple join algorithm*********************************************************************************/
-                System.out.print(j+",");
+                //System.out.print(j+",");
                 int bitcount = (int)Math.floor(Math.log(i*10000)/Math.log(2));
                 System.out.print("*"+bitcount);
                 startTime = System.nanoTime();
-                aja.ASHJ_Patricia(R1,S1,j);
-                //sja.SHJ(R1, S1, sig_len / Integer.SIZE, bitcount);
+                //aja.ASHJ_Patricia(R1,S1,j);
+                sja.SHJ(R1, S1, sig_len / Integer.SIZE, bitcount);
                 estimatedTime = System.nanoTime() - startTime;
                 System.out.print(estimatedTime/(1000000.0));
                 System.out.print("ms\n");
-                }
+                //}
                 R.clear();R1.clear();
                 S.clear();S1.clear();
 

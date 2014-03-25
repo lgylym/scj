@@ -31,7 +31,7 @@ public class SimpleJoinAlgorithms {
                 }
             }
         }
-        System.out.println("NL normal will return "+Integer.toString(count)+" results");
+        System.err.println("NL normal will return "+Integer.toString(count)+" results");
     }
 
     /**
@@ -39,7 +39,7 @@ public class SimpleJoinAlgorithms {
      * @param R
      * @param S
      */
-    public void NLSignatureJoin(ArrayList<SigSimpleTuple> R, ArrayList<SigSimpleTuple> S, int sig_len) {
+    public static void NLSignatureJoin(ArrayList<SigSimpleTuple> R, ArrayList<SigSimpleTuple> S, int sig_len) {
         //create signatures
         //long used = 0;
         //long start = System.nanoTime();
@@ -78,8 +78,8 @@ public class SimpleJoinAlgorithms {
 
             //stats.addValue(result);
         }
-        System.out.println("NL signature will return "+Long.toString(count)+" results");
-        System.out.println(count/((long)R.size()*(long)R.size()+0.0));//result percentage
+        System.err.println("NL signature will return "+Long.toString(count)+" results");
+        //System.out.println(count/((long)R.size()*(long)R.size()+0.0));//result percentage
         //System.out.println(temp/((long)R.size()*(long)R.size()+0.0));//P_hit
         //System.out.println(stats.getPercentile(50) + "," + stats.getMean() + "," + stats.getMax());
         //System.out.println("sig compare take "+MakeTests.sig_compare/1000000+"ms");
@@ -275,7 +275,7 @@ public class SimpleJoinAlgorithms {
      * @param S
      * @param sig_len
      */
-    public void SHJ(ArrayList<SigSimpleTuple> R, ArrayList<SigSimpleTuple> S, int sig_len, int useBitsInMap) {
+    public static void SHJ(ArrayList<SigSimpleTuple> R, ArrayList<SigSimpleTuple> S, int sig_len, int useBitsInMap) {
         //create signatures
         //initially not too big, but big enough
         HashMap<Integer,List<SigSimpleTuple>> hashMap = new HashMap<Integer, List<SigSimpleTuple>>(S.size()/2);
@@ -382,7 +382,7 @@ public class SimpleJoinAlgorithms {
 
             //System.out.print("\n");
         }
-        System.out.println("SHJ will return "+Integer.toString(count)+" results");
+        System.err.println("SHJ will return "+Integer.toString(count)+" results");
         //System.out.println("SHJ will return "+Integer.toString(count)+" results, "+(temp/((long)R.size()*(long)S.size()+0.0))
         //    +","+(hashMap.keySet().size()+0.0)/(1<<useBitsInMap));
         //System.out.println(phit/((long)R.size()*(long)S.size()+0.0));

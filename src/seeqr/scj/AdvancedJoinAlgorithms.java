@@ -1,7 +1,10 @@
 package seeqr.scj;
 
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
 
+import gnu.trove.iterator.TIntObjectIterator;
+import gnu.trove.procedure.TIntObjectProcedure;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -74,17 +77,82 @@ public class AdvancedJoinAlgorithms {
     }
 
 
+    public static void ASHJ_PatriciaDB(Set<SigSimpleTuple> R, Set<SigSimpleTuple> S,
+                                       int sigLen, int partitionSize) {
+        PatriciaTrie pt = new PatriciaTrie(sigLen);
+        int i = 0;
+        long count = 0;//result count
+        ArrayDeque<PatriciaTrie.PatriciaTrieNode> queue = new ArrayDeque<PatriciaTrie.PatriciaTrieNode>(partitionSize);
+
+
+        Iterator<SigSimpleTuple> it = S.iterator();
+        int Ssize = S.size();
+
+
+        for(SigSimpleTuple s:S) {
+            pt.put(s);
+            i++;
+
+            //for each of the partition
+            if((i % partitionSize == 0) || (i == Ssize)) {
+                //System.err.println("Insert to PT done.");
+                for(SigSimpleTuple r:R) {
+                    queue.clear();
+                    queue.add(pt.root);
+                    while (!queue.isEmpty()) {
+                        PatriciaTrie.PatriciaTrieNode node = queue.poll();
+                        //compare prefix
+                        if(PatriciaTrie.containCompare(r.signature, node.prefix, node.start, node.split-1) == true) {
+                            if(node.split >= sigLen * Integer.SIZE) {//reach the end, compare
+                                for(SigSimpleTuple ss:node.items) {
+                                    if((r.setSize >= ss.setSize) && (Utils.compare_set(r.setValues, ss.setValues) >= 0)) {
+                                        count ++;
+                                    }
+                                }
+                            }else {//need to compare more
+                                //get the split point of signature
+                                int bit = r.signature[node.split/Integer.SIZE] & (Integer.MIN_VALUE >>> (node.split%Integer.SIZE));
+                                //if(node.left == null || node.right == null) {
+                                //    System.out.print("fishy");
+                                //}
+                                if(bit == 0) {
+                                    queue.add(node.left);
+                                }else {
+                                    queue.add(node.left);
+                                    queue.add(node.right);
+                                }
+                            }
+                        }
+
+                    }
+                }
+                pt = new PatriciaTrie(sigLen);
+            }
+        }
+        System.err.println("PTSJ DB will return "+count+" results");
+    }
+
     public static void ASHJ_Patricia(ArrayList<SigSimpleTuple> R, ArrayList<SigSimpleTuple> S, int sigLen) {
         PatriciaTrie pt = new PatriciaTrie(sigLen);
         for(SigSimpleTuple s:S) {
             s.signature = Utils.create_sig_normal(s.setValues, sigLen);//sigLen is 4 by default
+
             pt.put(s);
         }
 
+
+        //create scenario to show the full picture of memory
+//        for(SigSimpleTuple r:R) {
+//            r.signature = Utils.create_sig_normal(r.setValues, sigLen);
+//        }
+//        CommandRun.printMemory();
+
+        System.err.println("Insert to patricia trie done");
         //array deque is likely to be faster than linked list implementation
         //LinkedList<PatriciaTrie.PatriciaTrieNode> queue = new LinkedList<PatriciaTrie.PatriciaTrieNode>();
         ArrayDeque<PatriciaTrie.PatriciaTrieNode> queue = new ArrayDeque<PatriciaTrie.PatriciaTrieNode>(S.size());
         int count = 0;
+
 
         for(SigSimpleTuple r:R) {
             r.signature = Utils.create_sig_normal(r.setValues, sigLen);
@@ -116,11 +184,52 @@ public class AdvancedJoinAlgorithms {
                 }
 
             }
-
-
         }
         System.err.println("ASHJ_Patricia will return "+Integer.toString(count)+" results");
         //pt.print(pt.root);
+    }
+
+
+    public static void PETTI_JoinDB(Set<SimpleTuple> R, Set<SimpleTuple> S, int partitionSize) {
+        PETTI pt = new PETTI();
+        HashMap<Integer,ArrayList<Integer>> invertedList = new HashMap<Integer, ArrayList<Integer>>();
+
+        int i = 0;
+        long count = 0;
+        int sSize = S.size();
+        int rSize = R.size();
+
+        for(SimpleTuple st:S) {
+            pt.put(st);
+            i++;
+
+            if((i % partitionSize == 0) || (i == sSize)) {
+                //do the join
+                int j = 0;
+                for(SimpleTuple r:R) {
+                    for(int element:r.setValues) {
+                        if(!invertedList.containsKey(element)) {
+                            ArrayList<Integer> l = new ArrayList<Integer>();
+                            l.add(r.tupleID);
+                            invertedList.put(element,l);
+                        }else {
+                            invertedList.get(element).add(r.tupleID);
+                        }
+                    }
+                    j++;
+
+                    if((j % partitionSize == 0) || (j == rSize)) {
+                        for(PETTI.Node child:pt.root.map.values()) {
+                            count += join(pt.root,child,null,invertedList);
+                        }
+                        invertedList.clear();
+                    }
+                }
+                pt = new PETTI();
+            }
+        }
+
+        System.err.println("PRETTI DB will return "+count+" results");
     }
 
 
@@ -152,6 +261,13 @@ public class AdvancedJoinAlgorithms {
 
         //put tuples from R to inverted index
         HashMap<Integer,ArrayList<Integer>> invertedList = new HashMap<Integer, ArrayList<Integer>>();
+
+//        System.err.println("***");
+//        for(SimpleTuple r : R) {
+//            System.err.println(r.tupleID);
+//        }
+//        System.err.println("***");
+
         for(SimpleTuple r:R) {
             for(int element:r.setValues) {
                 if(!invertedList.containsKey(element)) {
@@ -169,34 +285,62 @@ public class AdvancedJoinAlgorithms {
 //            Collections.sort(l);
 //        }
 
-        int count = 0;
+        //CommandRun.printMemory();
+        long count = 0;
+
+
         for(PETTI.Node child:pt.root.map.values()) {
-            count += join(child,null,invertedList);
+            count += join(pt.root, child, null, invertedList);
         }
         System.err.println("PETTI_Join will return "+count+" results");
     }
 
-    private static int join(PETTI.Node node, ArrayList upList, HashMap<Integer,ArrayList<Integer>> invertedList) {
-        int levelCount = 0;
-        ArrayList<Integer> currList;
-        if(upList == null) {
-            currList = invertedList.get(node.setItem);
+    private static long join(PETTI.Node parent, PETTI.Node node, ArrayList upList, final HashMap<Integer, ArrayList<Integer>> invertedList) {
+        long levelCount = 0;
+        ArrayList<Integer> currList;//currList holds the list of results
+        ArrayList<Integer> tojoin = invertedList.get(node.setItem);
+
+        if(upList == null && tojoin == null) {
+            return 0;
+        }else if(upList == null && tojoin != null) {
+            if(parent.setItem == -1) {
+                //from root node
+                currList = tojoin;
+            }else {
+                return 0;
+            }
+
+        }else if(upList != null && tojoin == null) {
+            return 0;
         }else {
-            //a join of uplist and cuurList
-            //currList = new ArrayList<Integer>(upList);
-            //currList.retainAll(invertedList.get(node.setItem));
-            currList = intersect(upList, invertedList.get(node.setItem));
+            currList = intersect(upList, tojoin);
         }
+//        if(upList == null) {
+//            currList = invertedList.get(node.setItem);
+//        }else {
+//            //a join of uplist and cuurList
+//            //currList = new ArrayList<Integer>(upList);
+//            //currList.retainAll(invertedList.get(node.setItem));
+//
+//            if(tojoin == null) {
+//                currList = upList;
+//            }else {
+//                currList = intersect(upList, tojoin);
+//            }
+//
+//        }
         if(node.tupleList != null) {
             for(Integer t:node.tupleList) {
-                for(int j:currList){
-                    levelCount ++;
+                for(Integer j:currList){
+//                    //j contains t
+//                    System.err.println(j + "\t"+t);
+                    levelCount++;
                 }
             }
         }
 
         for(PETTI.Node child:node.map.values()) {
-            levelCount += join(child, currList,invertedList);
+            levelCount += join(node, child, currList,invertedList);
         }
         return levelCount;
     }
@@ -246,5 +390,6 @@ public class AdvancedJoinAlgorithms {
         R.add(r2);
         aja.ASHJ_Patricia(R,R,1);
     }
+
 
 }

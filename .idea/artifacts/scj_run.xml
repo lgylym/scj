@@ -13,6 +13,9 @@
       <element id="extracted-dir" path="$PROJECT_DIR$/libs/guava-15.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/libs/jopt-simple-4.6.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/libs/junit-4.11.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/fastutil-6.5.12.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/hppc-0.5.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/trove-3.1a1.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

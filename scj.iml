@@ -14,6 +14,11 @@
     <orderEntry type="library" name="commons-lang3-3.3" level="project" />
     <orderEntry type="library" name="jopt-simple-4.6" level="project" />
     <orderEntry type="library" name="junit-4.11" level="project" />
+    <orderEntry type="library" name="jsr305-1.3.9" level="project" />
+    <orderEntry type="library" name="fastutil-6.5.12" level="project" />
+    <orderEntry type="library" name="hppc-0.5.4" level="project" />
+    <orderEntry type="library" name="trove-3.1a1" level="project" />
+    <orderEntry type="library" name="mapdb-0.9.9" level="project" />
   </component>
 </module>
 

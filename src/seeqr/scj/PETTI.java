@@ -17,7 +17,7 @@ public class PETTI {
 
         public Node(int setValue) {
             setItem = setValue;
-            map = new HashMap<Integer, Node>();
+            map = new HashMap<>();
         }
 
         public String toString() {

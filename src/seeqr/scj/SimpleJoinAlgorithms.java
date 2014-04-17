@@ -23,8 +23,14 @@ public class SimpleJoinAlgorithms {
      */
     public static void NLNormalJoin(ArrayList<SimpleTuple> R, ArrayList<SimpleTuple> S) {
         int count = 0;
+
+
         for(SimpleTuple r:R) {
             for(SimpleTuple s : S) {
+                if(r.tupleID == 341129 && s.tupleID == 771902) {
+                    System.out.println(r);
+                    System.out.println(s);
+                }
                 if(Utils.compare_set(r.setValues, s.setValues) >= 0) {
                     //output;
                     count ++;
@@ -269,6 +275,88 @@ public class SimpleJoinAlgorithms {
 
     }
 
+
+
+
+    public static void SHJDB(Set<SigSimpleTuple> R, Set<SigSimpleTuple> S, int sig_len, int useBitsInMap, int partitionSize) {
+        HashMap<Integer,List<SigSimpleTuple>> hashMap = new HashMap<Integer, List<SigSimpleTuple>>(partitionSize/2);
+        final int bitmask = (1<<31)>>(useBitsInMap-1);//the first useBitsInMap bits set to 1
+
+        long count = 0;
+        int i = 0;
+        int sSize = S.size();
+        for(SigSimpleTuple s:S) {
+            int keys = bitmask & (s.signature[0]);
+            List<SigSimpleTuple> ls = hashMap.get(keys);
+            if(ls == null) {
+                ls = new ArrayList<SigSimpleTuple>();
+                ls.add(s);
+                hashMap.put(keys,ls);
+            }else {
+                ls.add(s);
+            }
+            i++;
+
+
+            //time for the join to happen
+            if((i % partitionSize == 0) || (i == sSize)) {
+
+                for(SigSimpleTuple r:R) {
+                    int mask = bitmask & r.signature[0];
+                    int key = 1;
+
+
+
+                    if((mask & 1) == 1) {
+                        //hash_probe ++;
+                        List<SigSimpleTuple> l = hashMap.get(key);
+                        if(l != null) {
+                            //hash_probe_success ++;
+
+                            for(SigSimpleTuple lr:l) {
+                                //temp++;
+                                if((r.setSize >= lr.setSize) && (Utils.compare_sig_contain(r.signature, lr.signature)>=0)) {
+                                    //phit++;
+                                    if(Utils.compare_set(r.setValues, lr.setValues) >= 0) {
+                                        count ++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    while(key != 0) {
+                        key = mask & (key - mask);
+                        //hash_probe ++;
+                        List<SigSimpleTuple> l = hashMap.get(key);
+                        //System.out.print(Integer.toBinaryString(key>>>20));System.out.print(" ");
+                        if(l != null) {
+                            //hash_probe_success ++;
+                            for(SigSimpleTuple lr:l) {
+                                //temp++;
+                                if((r.setSize >= lr.setSize) && (Utils.compare_sig_contain(r.signature, lr.signature)>=0)) {
+                                    //phit++;
+                                    if(Utils.compare_set(r.setValues, lr.setValues) >= 0) {
+                                        count ++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    //System.out.print("\n");
+                }
+
+
+
+            }
+        }
+
+        System.err.println("SHJ DB will return "+Long.toString(count)+" results");
+
+    }
+
+
     /**
      * SHJ, but this is not the really SHJ, simplified with only a shorter long_signature.
      * @param R
@@ -308,6 +396,11 @@ public class SimpleJoinAlgorithms {
                 l.add(s);
             }
         }
+
+//        for(SigSimpleTuple r:R) {
+//            r.signature = Utils.create_sig_normal(r.setValues, sig_len);
+//        }
+//        CommandRun.printMemory();
 
         //long estimatedTime = System.nanoTime() - startTime;
         //System.out.println(BitOperations.toStringBitStream(newsig));
@@ -354,6 +447,7 @@ public class SimpleJoinAlgorithms {
                         if((r.setSize >= s.setSize) && (Utils.compare_sig_contain(r.signature, s.signature)>=0)) {
                             //phit++;
                             if(Utils.compare_set(r.setValues, s.setValues) >= 0) {
+
                                 count ++;
                             }
                         }

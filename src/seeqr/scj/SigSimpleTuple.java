@@ -8,6 +8,7 @@ public class SigSimpleTuple extends SimpleTuple {
     protected int[] signature;
 
     public String toString() {
+
         StringBuffer sb = new StringBuffer();
         sb.append("tuple:");
         sb.append(tupleID);

@@ -8,8 +8,6 @@ import joptsimple.OptionSet;
 import org.apache.commons.math3.distribution.UniformIntegerDistribution;
 import org.apache.commons.math3.distribution.ZipfDistribution;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.ardverk.collection.IntegerKeyAnalyzer;
-import org.junit.Test;
 
 import java.nio.file.Paths;
 import java.util.*;
@@ -96,13 +94,12 @@ public class CommandRun {
                 }
                 R4.clear();
                 S4.clear();
-
-
                 break;
 
             case "shj":
                 ArrayList<SigSimpleTuple> R1 = RelationLoader.loadRelation(rFile,SigSimpleTuple.class);
                 ArrayList<SigSimpleTuple> S1 = RelationLoader.loadRelation(sFile,SigSimpleTuple.class);
+                //printMemory();
                 int bitCount = (int)Math.floor(Math.log(R1.size())/Math.log(2));
                 if(sigLength <= 0) {
                     //get some set card. info
@@ -123,6 +120,8 @@ public class CommandRun {
                     SimpleJoinAlgorithms.SHJ(R1, S1, sigLength, bitCount);
                     stats.addValue((System.nanoTime()-startTime)/(1000000.0));
                 }
+                //printMemory();
+
                 R1.clear();
                 S1.clear();
                 break;
@@ -134,18 +133,51 @@ public class CommandRun {
                     AdvancedJoinAlgorithms.PETTI_Join(R2, S2);
                     stats.addValue((System.nanoTime()-startTime)/(1000000.0));
                 }
+                //printMemory();
                 R2.clear();
                 S2.clear();
                 break;
             case "ptsj":
                 ArrayList<SigSimpleTuple> R3 = RelationLoader.loadRelation(rFile,SigSimpleTuple.class);
                 ArrayList<SigSimpleTuple> S3 = RelationLoader.loadRelation(sFile,SigSimpleTuple.class);
-
+                //System.err.println("Data loading done");
                 //near optimal solution here
                 //sigLength = (int)Math.ceil(Math.log(2*R3.size())/Math.log(2));
                 if(sigLength <= 0) {
-                    sigLength = (int)Math.ceil(Math.log(2*R3.size())/Math.log(2))+1;
-                    System.err.println("Sig length set to " + sigLength);
+                    DescriptiveStatistics setcard = new DescriptiveStatistics();
+                    DescriptiveStatistics domcard = new DescriptiveStatistics();
+                    //get some set card. info, same as SHJ
+
+                    //sample the first 1000 tuples
+
+                    for(int i = 0; i < 500 && i < R3.size(); i++) {
+                        SigSimpleTuple t = R3.get(i);
+                        setcard.addValue(t.setValues.length);
+                        for(int j = 0; j < t.setSize; j++) {
+                            domcard.addValue(t.setValues[j]);
+                        }
+                        //maxDomCard = Math.max(R3.get(i).setValues[R3.get(i).setValues.length-1],maxDomCard);
+                    }
+                    //System.out.println(setcard.getPercentile(90)/8);
+                    //System.out.println(domcard.getPercentile(90)/32);
+
+                    int left = (int)Math.ceil(setcard.getPercentile(90)/8)+1;
+                    int right = (int)Math.ceil(domcard.getPercentile(90)/32)+1;
+                    int breakpoint = 32;
+                    if(left <= breakpoint && right <= breakpoint) {
+                        sigLength = (int)(0.25 * left + 0.75 * right);
+                    }else if(left <= breakpoint && right >= breakpoint) {
+                        sigLength = (int)(0.75 * left + 0.25 * right);
+                    }else if(left > breakpoint && right < breakpoint) {
+                        sigLength = right;
+                    }else {
+                        sigLength = (int)(0.75 * left + 0.25 * right);
+                    }
+
+//                    sigLength = Math.min(250,(int)setcard.getPercentile(80)/Integer.SIZE);//the maximum is set to 250, otherwise too much memory
+//                    //get the max of the two
+//                    sigLength = Math.max(sigLength,(int)Math.ceil(Math.log(2*R3.size())/Math.log(2)));
+                    System.err.println("Left: " + left + ", Right: " + right + ", Sig length: " + sigLength);
                     //System.out.println("Signature length has to be bigger than 0");
                     //return;
                 }
@@ -162,7 +194,15 @@ public class CommandRun {
         }
 
         System.out.println(Paths.get(rFile).getFileName().toString()+"," +
-                Paths.get(sFile).getFileName().toString() + "\t"+ joinMethod+"\t"+stats.getPercentile(50)+"ms");
+                Paths.get(sFile).getFileName().toString() + "\t"+ joinMethod+"\t"+stats.getMean()/1000 + "\t" + stats.getStandardDeviation()/1000 + "\t" + stats.getPercentile(50)/1000);
+    }
+
+
+    public static void printMemory() {
+        Runtime runtime = Runtime.getRuntime();
+        runtime.gc();
+        long memory = runtime.totalMemory() - runtime.freeMemory();
+        System.err.println("Used memory in KB: " + memory/1024L);
     }
 
 }

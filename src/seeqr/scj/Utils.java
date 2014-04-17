@@ -365,41 +365,46 @@ public class Utils {
         //System.out.println(Integer.toBinaryString(nextSmall(0x1,9)));
         //System.out.print(Integer.toBinaryString(nextSmallBitOP(0x1,9)));
 
-        int threshold = 10240;
-        long start = 0;
+        int a[] = {132977, 138746, 313186, 320784, 32163, 48888, 512442, 812640 };
+        int b[] = {138746, 32163, 48888, 812640 };
 
+        System.out.println(compare_set(a,b));
+
+//        int threshold = 10240;
+//        long start = 0;
+//
+////        start = System.nanoTime();
+////        for(int i = 0; i < threshold; i++) {
+////            for(int j = 0; j < threshold; j++) {
+////                nextSmall(i,j);
+////            }
+////        }
+////        System.out.println(System.nanoTime()-start);
+//
 //        start = System.nanoTime();
 //        for(int i = 0; i < threshold; i++) {
 //            for(int j = 0; j < threshold; j++) {
-//                nextSmall(i,j);
+//                nextSmallBitOP(i, j);
+////                if(nextSmall(i,j) != nextSmallBitOP(i, j)) {
+////                    System.out.print(i+","+j);
+////                }
 //            }
 //        }
 //        System.out.println(System.nanoTime()-start);
-
-        start = System.nanoTime();
-        for(int i = 0; i < threshold; i++) {
-            for(int j = 0; j < threshold; j++) {
-                nextSmallBitOP(i, j);
-//                if(nextSmall(i,j) != nextSmallBitOP(i, j)) {
-//                    System.out.print(i+","+j);
-//                }
-            }
-        }
-        System.out.println(System.nanoTime()-start);
-
-
-        start = System.nanoTime();
-        long k = 0xFF;
-        for(int i = 0; i < threshold; i++) {
-            for(int j = 0; j < threshold; j++) {
-                k= k & i & j;
-//                if(nextSmall(i,j) != nextSmallBitOP(i, j)) {
-//                    System.out.print(i+","+j);
-//                }
-            }
-        }
-        System.out.print(System.nanoTime()-start);
-
+//
+//
+//        start = System.nanoTime();
+//        long k = 0xFF;
+//        for(int i = 0; i < threshold; i++) {
+//            for(int j = 0; j < threshold; j++) {
+//                k= k & i & j;
+////                if(nextSmall(i,j) != nextSmallBitOP(i, j)) {
+////                    System.out.print(i+","+j);
+////                }
+//            }
+//        }
+//        System.out.print(System.nanoTime()-start);
+//
 
 //        int[] set2 = {1,2,3};
 //        int[] set3 = {1,2,5,6,7,8};

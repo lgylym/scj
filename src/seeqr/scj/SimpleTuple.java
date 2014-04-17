@@ -1,9 +1,11 @@
 package seeqr.scj;
 
+import java.io.Serializable;
+
 /**
  * Created by yluo on 12/19/13.
  */
-public class SimpleTuple implements Comparable<SimpleTuple>{
+public class SimpleTuple implements Comparable<SimpleTuple>, Serializable {
     protected int tupleID;
     protected int setSize;
     protected int[] setValues;

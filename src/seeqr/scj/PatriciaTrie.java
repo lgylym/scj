@@ -1,6 +1,11 @@
 package seeqr.scj;
 
+import com.google.common.collect.ArrayListMultimap;
+
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by yluo on 3/7/14.
@@ -9,6 +14,8 @@ public class PatriciaTrie {
     public static int[] lmasks = new int[Integer.SIZE];//masks for an integer
     public static int[] rmasks = new int[Integer.SIZE];
 
+    public int nodeCount;
+    public ArrayListMultimap<Integer,Integer> represent;//use mapping to maintain duplicate tuples,
 
 
     private int prefixLen = 4;//should be the same as the signature size, 4 by default
@@ -42,15 +49,16 @@ public class PatriciaTrie {
 
     public PatriciaTrie(int sigLen) {
         prefixLen = sigLen;
-
+        nodeCount = 1;
+        represent = ArrayListMultimap.create();
         //initially, we store an empty item in the trie, in the root
-
+        //note that here we set the empty signature to be all 1, so that it can (almost) always be filtered
         root = new PatriciaTrieNode();
         root.start = 0;
         root.split = prefixLen * Integer.SIZE; //out of the array do we split, means the leaf node
         root.prefix = new int[prefixLen];
         for(int i = 0; i < prefixLen; i++) {
-            root.prefix[i] = 0;
+            root.prefix[i] = 0xffffffff;
         }
         root.items = new ArrayList<SigSimpleTuple>();
 
@@ -117,7 +125,20 @@ public class PatriciaTrie {
                 if(node.items == null) {
                     node.items = new ArrayList<SigSimpleTuple>();
                 }
-                node.items.add(tuple);
+
+                //we consider duplicate situations here
+                boolean needInsert = true;
+                for(SigSimpleTuple s:node.items) {
+                    if(Utils.compare_set(s.setValues, tuple.setValues) == 0) {
+                        represent.put(s.tupleID,tuple.tupleID);
+                        needInsert = false;
+                        break;
+                    }
+                }
+                if(needInsert) {
+                    node.items.add(tuple);
+                }
+
             }else {//keep inserting
                 //get the bit at the split point
                 int bit = tuple.signature[node.split/Integer.SIZE] & (Integer.MIN_VALUE >>> (node.split%Integer.SIZE));
@@ -130,6 +151,7 @@ public class PatriciaTrie {
             return node;
         }else {//should split at index
             //
+            nodeCount += 2;
             PatriciaTrieNode newParent = new PatriciaTrieNode(node.prefix);
             PatriciaTrieNode newChild = new PatriciaTrieNode(tuple.signature);
             newChild.items = new ArrayList<SigSimpleTuple>();
@@ -156,6 +178,23 @@ public class PatriciaTrie {
         }
     }
 
+
+    /**
+     * Put the list entry length in statistics
+     */
+    public void getListLength() {
+        ArrayDeque<PatriciaTrieNode> queue = new ArrayDeque();
+        queue.add(root);
+        while(!queue.isEmpty()) {
+            PatriciaTrieNode node = queue.poll();
+            if(node.left != null && node.right != null) {
+                queue.add(node.left);
+                queue.add(node.right);
+            }else {
+                CommandRun.entry_len.addValue(node.items.size());
+            }
+        }
+    }
 
     /**
      * search for some signature in the trie. return the leaf node if possible

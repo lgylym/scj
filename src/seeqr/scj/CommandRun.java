@@ -8,6 +8,7 @@ import joptsimple.OptionSet;
 import org.apache.commons.math3.distribution.UniformIntegerDistribution;
 import org.apache.commons.math3.distribution.ZipfDistribution;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import sun.security.krb5.internal.crypto.Des;
 
 import java.nio.file.Paths;
 import java.util.*;
@@ -18,6 +19,12 @@ import static org.junit.Assert.*;
  * Created by yluo on 3/19/14.
  */
 public class CommandRun {
+
+    //todo delete
+    public static DescriptiveStatistics visit_node = new DescriptiveStatistics();//how many nodes are visited per search
+    public static DescriptiveStatistics remain_node = new DescriptiveStatistics();//the result size of sig match
+    public static DescriptiveStatistics sig_result = new DescriptiveStatistics();//(almost) count for set comparison
+    public static DescriptiveStatistics entry_len = new DescriptiveStatistics();//entry list length for leaf node
 
     public static void printHelp() {
         System.out.println("\nJoin execution usage:\n");
@@ -188,6 +195,7 @@ public class CommandRun {
                     AdvancedJoinAlgorithms.ASHJ_Patricia(R3, S3, sigLength);
                     stats.addValue((System.nanoTime()-startTime)/(1000000.0));
                 }
+                AdvancedJoinAlgorithms.ASHJ_Patricia_Measure(R3, S3, sigLength);
                 R3.clear();
                 S3.clear();
                 break;

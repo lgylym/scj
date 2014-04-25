@@ -7,6 +7,7 @@ import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.procedure.TIntObjectProcedure;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 /**
  * Created by yluo on 2/19/14.
@@ -156,16 +157,25 @@ public class AdvancedJoinAlgorithms {
 
         for(SigSimpleTuple r:R) {
             r.signature = Utils.create_sig_normal(r.setValues, sigLen);
+
+
             queue.clear();
             queue.add(pt.root);
             while (!queue.isEmpty()) {
                 PatriciaTrie.PatriciaTrieNode node = queue.poll();
                 //compare prefix
                 if(PatriciaTrie.containCompare(r.signature, node.prefix, node.start, node.split-1) == true) {
+
                     if(node.split >= sigLen * Integer.SIZE) {//reach the end, compare
+
                         for(SigSimpleTuple s:node.items) {
                             if((r.setSize >= s.setSize) && (Utils.compare_set(r.setValues, s.setValues) >= 0)) {
-                                count ++;
+                                count = count + 1 + (pt.represent.containsKey(s.tupleID)?pt.represent.get(s.tupleID).size():0);
+//                                if(pt.represent.containsKey(s.tupleID)) {
+//                                    count += pt.represent.get(s.tupleID).size();
+//                                }
+//                                count ++;
+
                             }
                         }
                     }else {//need to compare more
@@ -187,6 +197,91 @@ public class AdvancedJoinAlgorithms {
         }
         System.err.println("ASHJ_Patricia will return "+Integer.toString(count)+" results");
         //pt.print(pt.root);
+    }
+
+    public static void ASHJ_Patricia_Measure(ArrayList<SigSimpleTuple> R, ArrayList<SigSimpleTuple> S, int sigLen) {
+        PatriciaTrie pt = new PatriciaTrie(sigLen);
+        for(SigSimpleTuple s:S) {
+            s.signature = Utils.create_sig_normal(s.setValues, sigLen);//sigLen is 4 by default
+
+            pt.put(s);
+        }
+
+
+        //create scenario to show the full picture of memory
+//        for(SigSimpleTuple r:R) {
+//            r.signature = Utils.create_sig_normal(r.setValues, sigLen);
+//        }
+//        CommandRun.printMemory();
+
+        System.err.println("Insert to patricia trie done");
+        //array deque is likely to be faster than linked list implementation
+        //LinkedList<PatriciaTrie.PatriciaTrieNode> queue = new LinkedList<PatriciaTrie.PatriciaTrieNode>();
+        ArrayDeque<PatriciaTrie.PatriciaTrieNode> queue = new ArrayDeque<PatriciaTrie.PatriciaTrieNode>(S.size());
+        int count = 0;
+
+
+        for(SigSimpleTuple r:R) {
+            r.signature = Utils.create_sig_normal(r.setValues, sigLen);
+
+            int visited_nodes = 0;
+            int sig_contained = 0;
+            int sig_result = 0;
+
+            queue.clear();
+            queue.add(pt.root); visited_nodes += 1;
+            while (!queue.isEmpty()) {
+                PatriciaTrie.PatriciaTrieNode node = queue.poll();
+                //compare prefix
+                if(PatriciaTrie.containCompare(r.signature, node.prefix, node.start, node.split-1) == true) {
+
+                    if(node.split >= sigLen * Integer.SIZE) {//reach the end, compare
+                        sig_contained += 1;
+                        sig_result += node.items.size();
+
+                        for(SigSimpleTuple s:node.items) {
+                            if((r.setSize >= s.setSize) && (Utils.compare_set(r.setValues, s.setValues) >= 0)) {
+                                count = count + 1 + (pt.represent.containsKey(s.tupleID)?pt.represent.get(s.tupleID).size():0);
+//                                if(pt.represent.containsKey(s.tupleID)) {
+//                                    count += pt.represent.get(s.tupleID).size();
+//                                }
+//                                count ++;
+                            }
+                        }
+                    }else {//need to compare more
+                        //get the split point of signature
+                        int bit = r.signature[node.split/Integer.SIZE] & (Integer.MIN_VALUE >>> (node.split%Integer.SIZE));
+                        //if(node.left == null || node.right == null) {
+                        //    System.out.print("fishy");
+                        //}
+                        if(bit == 0) {
+                            queue.add(node.left); visited_nodes += 1;
+                        }else {
+                            queue.add(node.left); visited_nodes += 2;
+                            queue.add(node.right);
+                        }
+                    }
+                }
+
+            }
+            CommandRun.visit_node.addValue(visited_nodes);
+            CommandRun.remain_node.addValue(sig_contained);
+            CommandRun.sig_result.addValue(sig_result);
+        }
+        System.err.println("ASHJ_Patricia will return "+Integer.toString(count)+" results");
+        System.out.println("PT node count: " + pt.nodeCount);
+        printStat(CommandRun.visit_node,"Visited nodes\t");
+        printStat(CommandRun.remain_node,"Nodes for probe\t");
+        printStat(CommandRun.sig_result,"Tuples for probe");
+        pt.getListLength();
+        printStat(CommandRun.entry_len,"Entry list length");
+        //pt.print(pt.root);
+    }
+
+
+    public static void printStat(DescriptiveStatistics stat, String description) {
+        System.out.format(description + "\t" + "%.2f\t%.2f\t%.2f\t%.2f%n",stat.getMean(),stat.getStandardDeviation(),
+                stat.getMin(),stat.getMax());
     }
 
 

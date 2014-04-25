@@ -14,7 +14,12 @@ import java.util.Random;
  */
 public class JustTest {
     public static void main(String[] args) {
-        System.out.print(Integer.numberOfLeadingZeros(-1));
+        DescriptiveStatistics de = new DescriptiveStatistics();
+        de.addValue(1);
+        de.addValue(1);
+        //de.addValue(2);
+        System.out.println(de.getMin());
+        //System.out.print(Integer.numberOfLeadingZeros(-1));
 
 
         //JustTest jt = new JustTest();

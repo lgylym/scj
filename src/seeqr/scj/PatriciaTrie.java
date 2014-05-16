@@ -41,11 +41,54 @@ public class PatriciaTrie {
 
         @Override
         public String toString() {
-            String result = "start:" + start + ",split:" + split+"  ";
-            return result;
+            StringBuffer result = new StringBuffer();
+            result.append("start:" + start + ",split:" + split+" signature:" + BitOperations.toStringBitStream(prefix));
+            if(items != null) {
+                for(SigSimpleTuple s:items){
+                    result.append(" " + s.toString());
+                }
+            }
+            return result.toString();
         }
     }
 
+    public int getMaxHeight() {
+        return getMaxHeight(root);
+    }
+
+    public int getMinHeight() {
+        return getMinHeight(root);
+    }
+
+
+    public void dfsHeight() {
+        dfsHeight(root,0);
+    }
+
+    private void dfsHeight(PatriciaTrieNode node, int currentHeight) {
+        if(node == null) {//reach the leaf
+            CommandRun.trie_height.addValue(currentHeight);
+        }
+        else {
+            dfsHeight(node.left, currentHeight + 1);
+            dfsHeight(node.right, currentHeight + 1);
+        }
+    }
+
+
+    private int getMinHeight(PatriciaTrieNode node) {
+        if(node == null) {
+            return 0;
+        }
+        return 1 + Math.min(getMinHeight(node.left), getMinHeight(node.right));
+    }
+
+    private int getMaxHeight(PatriciaTrieNode node) {
+        if(node == null) {
+            return 0;
+        }
+        return 1 + Math.max(getMaxHeight(node.left),getMaxHeight(node.right));
+    }
 
     public PatriciaTrie(int sigLen) {
         prefixLen = sigLen;
@@ -53,15 +96,7 @@ public class PatriciaTrie {
         represent = ArrayListMultimap.create();
         //initially, we store an empty item in the trie, in the root
         //note that here we set the empty signature to be all 1, so that it can (almost) always be filtered
-        root = new PatriciaTrieNode();
-        root.start = 0;
-        root.split = prefixLen * Integer.SIZE; //out of the array do we split, means the leaf node
-        root.prefix = new int[prefixLen];
-        for(int i = 0; i < prefixLen; i++) {
-            root.prefix[i] = 0xffffffff;
-        }
-        root.items = new ArrayList<SigSimpleTuple>();
-
+        root = null;
         lmasks[0] = -1;//1111...1111
         rmasks[Integer.SIZE-1] = -1;//1111...1111
         for(int i = 1; i < lmasks.length; i++) {
@@ -93,8 +128,12 @@ public class PatriciaTrie {
     }
 
 
-    public void print(PatriciaTrieNode node) {
-        System.out.print(node);
+    public void print() {
+        print(root);
+    }
+
+    private void print(PatriciaTrieNode node) {
+        System.out.println(node);
         if(node.left != null) {
             print(node.left);
         }
@@ -105,7 +144,19 @@ public class PatriciaTrie {
 
     //put a tuple into the trie, call insert
     public void put(SigSimpleTuple tuple) {
-        root = insert(root, tuple, 0);
+        if(root == null) {
+            root = new PatriciaTrieNode();
+            root.start = 0;
+            root.split = prefixLen * Integer.SIZE; //out of the array do we split, means the leaf node
+            root.prefix = new int[prefixLen];
+            for(int i = 0; i < prefixLen; i++) {
+                root.prefix[i] = tuple.signature[i];
+            }
+            root.items = new ArrayList<>();
+            root.items.add(tuple);
+        }else {
+            root = insert(root, tuple, 0);
+        }
     }
 
     /**

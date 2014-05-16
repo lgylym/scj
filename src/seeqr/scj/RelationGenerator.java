@@ -22,7 +22,7 @@ import static java.util.Collections.sort;
 public class RelationGenerator {
 
     public enum Distribution {
-        Uniform, Zipf, Poisson
+        Uniform, Zipf, Poisson, Constant
     }
 
     //singleton
@@ -66,6 +66,9 @@ public class RelationGenerator {
                 setcardGen = new PoissonDistribution(rng,setcardMax,
                         PoissonDistribution.DEFAULT_EPSILON,PoissonDistribution.DEFAULT_MAX_ITERATIONS);
                 break;
+            case Constant:
+                setcardGen = null;
+                break;
             default:
                 setcardGen = new UniformIntegerDistribution(rng, 1, setcardMax);
         }
@@ -82,6 +85,7 @@ public class RelationGenerator {
                 setelemGen = new PoissonDistribution(rng,setelemMax,
                         PoissonDistribution.DEFAULT_EPSILON,PoissonDistribution.DEFAULT_MAX_ITERATIONS);
                 break;
+
             default:
                 setelemGen = new UniformIntegerDistribution(rng, 1, setelemMax);
         }
@@ -103,7 +107,12 @@ public class RelationGenerator {
                     System.err.print("\r"+i/step + "%");
                 }
 
-                setSize = setcardGen.sample();
+                if(setcardDistribution == Distribution.Constant) {
+                    setSize = setcardMax;
+                }else {
+                    setSize = setcardGen.sample();
+                }
+                //setSize = 4;
                 if(setcardDistribution == Distribution.Poisson) {
                     setSize ++;//make sure there is no zero set size
                 }
@@ -148,7 +157,7 @@ public class RelationGenerator {
     /**
      * s - seed, optional, default value is 0
      * r - relation size
-     * c - set cardinality distribution, choices from {uniform, zipf, poisson}
+     * c - set cardinality distribution, choices from {uniform, zipf, poisson, constant}
      * m - set cardinality max, for Poisson Distribution this is the mean
      * e - set element distribution, choices from {uniform, zipf, poisson}
      * d - set element max (domain), for Poisson Distribution this is the mean
@@ -209,6 +218,8 @@ public class RelationGenerator {
                 return Distribution.Zipf;
             case "poisson":
                 return Distribution.Poisson;
+            case "constant":
+                return Distribution.Constant;
         }
         System.out.println("Cannot recognize distribution in getDistribution()");
         return Distribution.Uniform;

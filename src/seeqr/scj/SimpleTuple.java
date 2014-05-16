@@ -17,6 +17,13 @@ public class SimpleTuple implements Comparable<SimpleTuple>, Serializable {
         this.setSize = set_size;
     }
 
+    public SimpleTuple(int tuple_id, int[] set_values) {
+        this.tupleID = tuple_id;
+        this.setValues = set_values;
+        this.setSize = setValues.length;
+    }
+
+
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("tuple:");

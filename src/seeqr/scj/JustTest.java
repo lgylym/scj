@@ -6,6 +6,7 @@ import com.google.common.hash.Hashing;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Random;
 
@@ -14,12 +15,18 @@ import java.util.Random;
  */
 public class JustTest {
     public static void main(String[] args) {
-        DescriptiveStatistics de = new DescriptiveStatistics();
-        de.addValue(1);
-        de.addValue(1);
-        //de.addValue(2);
-        System.out.println(de.getMin());
-        //System.out.print(Integer.numberOfLeadingZeros(-1));
+        ArrayList<Integer> a= new ArrayList<>();
+        a.add(1);
+        a.add(2);
+        a.add(3);
+        Collections.shuffle(a);
+        System.out.print(a);
+//        DescriptiveStatistics de = new DescriptiveStatistics();
+//        de.addValue(1);
+//        de.addValue(1);
+//        //de.addValue(2);
+//        System.out.println(de.getMin());
+//        //System.out.print(Integer.numberOfLeadingZeros(-1));
 
 
         //JustTest jt = new JustTest();

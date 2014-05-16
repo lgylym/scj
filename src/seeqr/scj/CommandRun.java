@@ -3,15 +3,18 @@ package seeqr.scj;
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
 
+import com.google.common.base.Stopwatch;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.apache.commons.math3.distribution.UniformIntegerDistribution;
 import org.apache.commons.math3.distribution.ZipfDistribution;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import sun.security.krb5.internal.crypto.Des;
 
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
 
@@ -25,13 +28,18 @@ public class CommandRun {
     public static DescriptiveStatistics remain_node = new DescriptiveStatistics();//the result size of sig match
     public static DescriptiveStatistics sig_result = new DescriptiveStatistics();//(almost) count for set comparison
     public static DescriptiveStatistics entry_len = new DescriptiveStatistics();//entry list length for leaf node
+    public static SummaryStatistics trie_height = new SummaryStatistics();//trie height, we want to know the max, min, avg
+
+    public static String toPrint = "\n";
+
+    public static Stopwatch stopwatch = Stopwatch.createUnstarted();
 
     public static void printHelp() {
         System.out.println("\nJoin execution usage:\n");
         System.out.println("java -jar some.jar\n" +
                 "-r=fileR file path for relation R\n" +
                 "-s=fileS file path for relation S\n" +
-                "-j=joinMethod {nlj, nljsig, shj, pretti, ptsj}\n" +
+                "-j=joinMethod {nlj, nljsig, shj, pretti, pplus, ptsj}\n" +
                 "[l=sigLength] length for signature in integer, for nljsig shj and ptsj, system will try to assign the best if not specified\n");
         System.out.println("Example: java -jar some.jar -r=R.data -s=S.data -j=shj -l=4");
     }
@@ -52,7 +60,7 @@ public class CommandRun {
             return;
         }
 
-        int numberOfRuns = 5;
+        int numberOfRuns = 1;
         OptionParser parser = new OptionParser( "r:s:j:l::" );
         OptionSet options = parser.parse(args);
         String rFile = (String) options.valueOf("r");
@@ -133,6 +141,7 @@ public class CommandRun {
                 S1.clear();
                 break;
             case "pretti":
+            {
                 ArrayList<SimpleTuple> R2 = RelationLoader.loadRelation(rFile,SimpleTuple.class);
                 ArrayList<SimpleTuple> S2 = RelationLoader.loadRelation(sFile,SimpleTuple.class);
                 for(int i = 0; i < numberOfRuns; i++) {
@@ -143,7 +152,22 @@ public class CommandRun {
                 //printMemory();
                 R2.clear();
                 S2.clear();
+            }
                 break;
+            case "pplus":
+            {
+                ArrayList<SimpleTuple> R2 = RelationLoader.loadRelation(rFile,SimpleTuple.class);
+                ArrayList<SimpleTuple> S2 = RelationLoader.loadRelation(sFile,SimpleTuple.class);
+                for(int i = 0; i < numberOfRuns; i++) {
+                    AdvancedJoinAlgorithms.PRETTIPLUS_Join(R2, S2);
+                    stats.addValue(stopwatch.elapsed(TimeUnit.MILLISECONDS));
+                }
+                //printMemory();
+                R2.clear();
+                S2.clear();
+            }
+                break;
+
             case "ptsj":
                 ArrayList<SigSimpleTuple> R3 = RelationLoader.loadRelation(rFile,SigSimpleTuple.class);
                 ArrayList<SigSimpleTuple> S3 = RelationLoader.loadRelation(sFile,SigSimpleTuple.class);
@@ -189,20 +213,28 @@ public class CommandRun {
                     //return;
                 }
 
-
+//todo disable runs to speed up
                 for(int i = 0; i < numberOfRuns; i++) {
                     startTime = System.nanoTime();
                     AdvancedJoinAlgorithms.ASHJ_Patricia(R3, S3, sigLength);
                     stats.addValue((System.nanoTime()-startTime)/(1000000.0));
                 }
+
                 AdvancedJoinAlgorithms.ASHJ_Patricia_Measure(R3, S3, sigLength);
                 R3.clear();
                 S3.clear();
                 break;
         }
 
-        System.out.println(Paths.get(rFile).getFileName().toString()+"," +
-                Paths.get(sFile).getFileName().toString() + "\t"+ joinMethod+"\t"+stats.getMean()/1000 + "\t" + stats.getStandardDeviation()/1000 + "\t" + stats.getPercentile(50)/1000);
+        System.out.print(
+                Paths.get(rFile).getFileName().toString()//+","
+                        //+ Paths.get(sFile).getFileName().toString()
+                        + "\t" + joinMethod + "\t" + sigLength
+                        + "\t" + stats.getMean() / 1000
+                        + "\t" + stats.getStandardDeviation() / 1000
+                        + "\t" + toPrint
+                //+ "\t" + stats.getPercentile(50)/1000
+        );
     }
 
 

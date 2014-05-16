@@ -231,6 +231,23 @@ public class Utils {
         return signature;
     }
 
+    public static int[] create_sig_hash(int[] set, int sig_len) {
+        int[] signature = new int[sig_len];
+        int remainder = 0;
+        int index = 0;
+        int bit = 0;
+
+        for(int i = 0; i < set.length; i++) {
+            remainder = hf.hashInt(set[i]).asInt()%(Integer.SIZE*sig_len);
+            remainder = remainder < 0? -remainder : remainder;
+            index = remainder / Integer.SIZE;
+            bit = remainder % Integer.SIZE;
+            signature[index] |= 1 << (bit);
+        }
+
+        return signature;
+    }
+
     /**
      * bit_count is smaller than 32
      * @param set

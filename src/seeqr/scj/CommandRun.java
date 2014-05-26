@@ -60,7 +60,7 @@ public class CommandRun {
             return;
         }
 
-        int numberOfRuns = 1;
+        int numberOfRuns = 10;
         OptionParser parser = new OptionParser( "r:s:j:l::" );
         OptionSet options = parser.parse(args);
         String rFile = (String) options.valueOf("r");
@@ -144,11 +144,11 @@ public class CommandRun {
             {
                 ArrayList<SimpleTuple> R2 = RelationLoader.loadRelation(rFile,SimpleTuple.class);
                 ArrayList<SimpleTuple> S2 = RelationLoader.loadRelation(sFile,SimpleTuple.class);
-                for(int i = 0; i < numberOfRuns; i++) {
+                //for(int i = 0; i < numberOfRuns; i++) {
                     startTime = System.nanoTime();
                     AdvancedJoinAlgorithms.PETTI_Join(R2, S2);
                     stats.addValue((System.nanoTime()-startTime)/(1000000.0));
-                }
+                //}
                 //printMemory();
                 R2.clear();
                 S2.clear();
@@ -158,10 +158,10 @@ public class CommandRun {
             {
                 ArrayList<SimpleTuple> R2 = RelationLoader.loadRelation(rFile,SimpleTuple.class);
                 ArrayList<SimpleTuple> S2 = RelationLoader.loadRelation(sFile,SimpleTuple.class);
-                for(int i = 0; i < numberOfRuns; i++) {
+                //for(int i = 0; i < numberOfRuns; i++) {
                     AdvancedJoinAlgorithms.PRETTIPLUS_Join(R2, S2);
                     stats.addValue(stopwatch.elapsed(TimeUnit.MILLISECONDS));
-                }
+                //}
                 //printMemory();
                 R2.clear();
                 S2.clear();
@@ -220,7 +220,7 @@ public class CommandRun {
                     stats.addValue((System.nanoTime()-startTime)/(1000000.0));
                 }
 
-                AdvancedJoinAlgorithms.ASHJ_Patricia_Measure(R3, S3, sigLength);
+//                AdvancedJoinAlgorithms.ASHJ_Patricia_Measure(R3, S3, sigLength);
                 R3.clear();
                 S3.clear();
                 break;
@@ -242,7 +242,7 @@ public class CommandRun {
         Runtime runtime = Runtime.getRuntime();
         runtime.gc();
         long memory = runtime.totalMemory() - runtime.freeMemory();
-        System.err.println("Used memory in KB: " + memory/1024L);
+        System.out.println("Used memory in KB: " + memory/1024L);
     }
 
 }

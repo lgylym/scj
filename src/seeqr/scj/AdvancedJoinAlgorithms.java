@@ -148,7 +148,8 @@ public class AdvancedJoinAlgorithms {
 //        for(SigSimpleTuple r:R) {
 //            r.signature = Utils.create_sig_normal(r.setValues, sigLen);
 //        }
-//        CommandRun.printMemory();
+        //todo delete
+        CommandRun.printMemory();
 
         System.err.println("Insert to patricia trie done");
         //array deque is likely to be faster than linked list implementation
@@ -397,7 +398,9 @@ public class AdvancedJoinAlgorithms {
 //            Collections.sort(l);
 //        }
 
-        //CommandRun.printMemory();
+        //todo delete
+        CommandRun.printMemory();
+
         long count = 0;
 
 
@@ -435,6 +438,9 @@ public class AdvancedJoinAlgorithms {
         }
 
         System.err.println("Inverted list done.");
+
+        //todo delete
+        CommandRun.printMemory();
 
         long count = 0;
 

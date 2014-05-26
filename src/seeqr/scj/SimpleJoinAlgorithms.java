@@ -400,7 +400,8 @@ public class SimpleJoinAlgorithms {
 //        for(SigSimpleTuple r:R) {
 //            r.signature = Utils.create_sig_normal(r.setValues, sig_len);
 //        }
-//        CommandRun.printMemory();
+        //todo delete
+        CommandRun.printMemory();
 
         //long estimatedTime = System.nanoTime() - startTime;
         //System.out.println(BitOperations.toStringBitStream(newsig));
